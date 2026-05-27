@@ -6,11 +6,10 @@ from datetime import datetime, timedelta
 import email.utils
 
 # ==========================================
-# 1. 디자인 및 페이지 설정 (한 화면에 맞춤)
+# 1. 디자인 및 페이지 설정
 # ==========================================
 st.set_page_config(page_title="OTT Industry Intelligence", page_icon="📈", layout="wide")
 
-# 커스텀 스타일 (CSS) - 여백을 줄여 컴팩트하게 구성
 st.markdown("""
     <style>
     .block-container { padding-top: 1.5rem; padding-bottom: 1rem; }
@@ -29,9 +28,11 @@ except Exception as e:
     st.error("🚨 Secrets 설정이 누락되었습니다. Streamlit Cloud 설정(Advanced settings)에서 API 키를 입력해주세요.")
     st.stop()
 
-# 필터링 단어 사전
 BLACK_LIST = ["출연", "캐스팅", "첫방", "시청률", "아이돌", "배우", "드라마", "예능", "화제", "포토", "종영", "비하인드", "팬미팅", "제작발표회", "라인업", "시즌2", "결말", "티저", "감독", "예고편", "포스터", "신작", "몇부작", "연기", "정체", "시청자", "관전포인트", "스포일러", "안방극장", "스크린", "줄거리", "회차"]
-WHITE_LIST = ["합병", "인수", "지분", "실적", "공정위", "구조조정", "전략", "대표", "적자", "흑자", "매출", "투자", "MAU", "점유율", "가입자", "기업결합", "시너지", "주주", "재무", "규제", "토종", "연합", "광고", "요금제", "영입", "플랫폼", "동향", "경쟁", "무료", "생존", "이용률", "매각"]
+
+# 🚨 [버그 수정됨] 검색어인 "합병"을 제외했습니다. 
+# 이제 아래 단어들이 본문이나 제목에 '진짜로' 있어야만 산업 기사로 인정받습니다.
+WHITE_LIST = ["인수", "지분", "실적", "공정위", "구조조정", "전략", "대표", "적자", "흑자", "매출", "투자", "MAU", "점유율", "가입자", "기업결합", "시너지", "주주", "재무", "규제", "토종", "연합", "광고", "요금제", "영입", "플랫폼", "동향", "경쟁", "무료", "생존", "이용률", "매각"]
 
 def clean_html(text):
     text = re.sub(r'<.*?>', '', text)
@@ -41,14 +42,23 @@ def is_industry_news(title, description):
     full_text = title + " " + description
     has_black = any(word in full_text for word in BLACK_LIST)
     has_white = any(word in full_text for word in WHITE_LIST)
-    if has_white: return True, "✅ 산업 뉴스"
-    if not has_black: return True, "✅ 일반 뉴스"
-    return False, "🚫 연예/홍보성"
+    
+    # [수정] 가장 엄격한 Opt-in 방식 필터링 복구
+    if has_white: 
+        if has_black:
+            return True, "✅ 통과 (블랙+화이트 혼합)"
+        return True, "✅ 통과 (산업 뉴스)"
+        
+    if has_black: 
+        return False, "🚫 차단 (연예/홍보 단어)"
+        
+    # 화이트도 없고 블랙도 없는 애매한 기사는 버립니다.
+    return False, "🚫 차단 (산업 관련 단어 없음)"
 
 # ==========================================
-# 3. 뉴스 수집 엔진 (요약 제거 버전)
+# 3. 뉴스 수집 엔진
 # ==========================================
-def fetch_all_news(query, days=4):
+def fetch_all_news(query, days):
     target_date = (datetime.now() - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
     url = "https://openapi.naver.com/v1/search/news.json"
     headers = {"X-Naver-Client-Id": CLIENT_ID, "X-Naver-Client-Secret": CLIENT_SECRET}
@@ -77,7 +87,6 @@ def fetch_all_news(query, days=4):
                 title, desc = clean_html(item['title']), clean_html(item['description'])
                 is_valid, reason = is_industry_news(title, desc)
                 
-                # [수정] UI 슬림화를 위해 '요약' 항목을 데이터셋에서 완전히 뺐습니다.
                 news_data = {
                     "발행일": pub_date.strftime("%m-%d %H:%M"),
                     "제목": title,
@@ -101,7 +110,10 @@ st.title("📈 OTT Industry Intelligence")
 with st.sidebar:
     st.header("⚙️ Control")
     search_keyword = st.text_input("검색어 설정", value="티빙 웨이브 합병")
-    search_days = st.slider("조회 기간 (일)", 1, 14, 5)
+    
+    # 🚨 [요청 반영] 조회 기간 최대를 7일로 수정했습니다.
+    search_days = st.slider("조회 기간 (일)", 1, 7, 5)
+    
     update_btn = st.button("🔥 데이터 업데이트", use_container_width=True)
     st.divider()
     st.caption("복합 검색 시 `|` 기호를 사용하세요. \n*(예: `티빙 합병 | 웨이브 매각`)*")
@@ -113,7 +125,6 @@ if update_btn:
         st.session_state['df_f'] = df_f
 
 if 'df_v' in st.session_state:
-    # 3단 지표 바
     m1, m2, m3 = st.columns(3)
     m1.metric("선별된 산업 기사", f"{len(st.session_state['df_v'])} 건")
     m2.metric("차단된 노이즈 기사", f"{len(st.session_state['df_f'])} 건")
@@ -123,7 +134,6 @@ if 'df_v' in st.session_state:
     
     with tab1:
         if not st.session_state['df_v'].empty:
-            # height=450으로 지정하여 표가 한 화면 안에 고정되도록 제어
             st.dataframe(
                 st.session_state['df_v'],
                 column_config={
