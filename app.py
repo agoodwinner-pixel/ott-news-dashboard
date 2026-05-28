@@ -28,11 +28,9 @@ except Exception as e:
     st.error("🚨 Secrets 설정이 누락되었습니다. Streamlit Cloud 설정(Advanced settings)에서 API 키를 입력해주세요.")
     st.stop()
 
+# 필터링 단어 사전
 BLACK_LIST = ["출연", "캐스팅", "첫방", "시청률", "아이돌", "배우", "드라마", "예능", "화제", "포토", "종영", "비하인드", "팬미팅", "제작발표회", "라인업", "시즌2", "결말", "티저", "감독", "예고편", "포스터", "신작", "몇부작", "연기", "정체", "시청자", "관전포인트", "스포일러", "안방극장", "스크린", "줄거리", "회차"]
-
-# 🚨 [버그 수정됨] 검색어인 "합병"을 제외했습니다. 
-# 이제 아래 단어들이 본문이나 제목에 '진짜로' 있어야만 산업 기사로 인정받습니다.
-WHITE_LIST = ["인수", "지분", "실적", "공정위", "구조조정", "전략", "대표", "적자", "흑자", "매출", "투자", "MAU", "점유율", "가입자", "기업결합", "시너지", "주주", "재무", "규제", "토종", "연합", "광고", "요금제", "영입", "플랫폼", "동향", "경쟁", "무료", "생존", "이용률", "매각"]
+WHITE_LIST = ["인수", "지분", "실적", "공정위", "구조조정", "전략", "대표", "적자", "흑자", "매출", "투자", "MAU", "점유율", "가입자", "기업결합", "시너지", "주주", "재무", "규제", "토종", "연합", "광고", "요금제", "영입", "플랫폼", "동향", "경쟁", "무료", "생존", "이용률", "매각", "합병"]
 
 def clean_html(text):
     text = re.sub(r'<.*?>', '', text)
@@ -43,7 +41,7 @@ def is_industry_news(title, description):
     has_black = any(word in full_text for word in BLACK_LIST)
     has_white = any(word in full_text for word in WHITE_LIST)
     
-    # [수정] 가장 엄격한 Opt-in 방식 필터링 복구
+    # Opt-in 방식 필터링
     if has_white: 
         if has_black:
             return True, "✅ 통과 (블랙+화이트 혼합)"
@@ -52,7 +50,6 @@ def is_industry_news(title, description):
     if has_black: 
         return False, "🚫 차단 (연예/홍보 단어)"
         
-    # 화이트도 없고 블랙도 없는 애매한 기사는 버립니다.
     return False, "🚫 차단 (산업 관련 단어 없음)"
 
 # ==========================================
@@ -109,13 +106,22 @@ st.title("📈 OTT Industry Intelligence")
 
 with st.sidebar:
     st.header("⚙️ Control")
-    search_keyword = st.text_input("검색어 설정", value="티빙 웨이브 합병")
     
-    # 🚨 [요청 반영] 조회 기간 최대를 7일로 수정했습니다.
+    # 🚨 [수정됨] 필터링이 일하는 것을 보기 위해 기본 검색어에서 "합병"을 뺐습니다!
+    search_keyword = st.text_input("검색어 설정", value="티빙 웨이브")
     search_days = st.slider("조회 기간 (일)", 1, 7, 5)
     
     update_btn = st.button("🔥 데이터 업데이트", use_container_width=True)
+    
     st.divider()
+    
+    # 🚨 [추가됨] 블랙리스트/화이트리스트 확인 기능 (접었다 폈다 할 수 있는 Expander)
+    with st.expander("📝 현재 필터링 단어장 보기"):
+        st.markdown("**🟢 화이트리스트 (반드시 포함)**")
+        st.caption(", ".join(WHITE_LIST))
+        st.markdown("**🔴 블랙리스트 (연예/콘텐츠)**")
+        st.caption(", ".join(BLACK_LIST))
+        
     st.caption("복합 검색 시 `|` 기호를 사용하세요. \n*(예: `티빙 합병 | 웨이브 매각`)*")
 
 if update_btn:
