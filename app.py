@@ -179,6 +179,32 @@ st.markdown("""
         border-radius: 6px !important;
         white-space: nowrap !important;
     }
+    [data-testid="stHorizontalBlock"] .stButton>button[kind="primary"],
+    [data-testid="stHorizontalBlock"] .stButton>button[data-testid="stBaseButton-primary"] {
+        background: #4f46e5 !important;
+        color: #ffffff !important;
+        border: 2px solid #4f46e5 !important;
+        font-weight: 700 !important;
+        box-shadow: 0 2px 8px rgba(79,70,229,0.3) !important;
+    }
+    [data-testid="stHorizontalBlock"] .stButton>button[kind="secondary"],
+    [data-testid="stHorizontalBlock"] .stButton>button[data-testid="stBaseButton-secondary"] {
+        background: #f1f5f9 !important;
+        color: #64748b !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: none !important;
+    }
+    [data-testid="stBaseButton-primary"]>button {
+        background: #4f46e5 !important;
+        color: #ffffff !important;
+        border: 2px solid #4f46e5 !important;
+        box-shadow: 0 2px 8px rgba(79,70,229,0.3) !important;
+    }
+    [data-testid="stBaseButton-secondary"]>button {
+        background: #f1f5f9 !important;
+        color: #64748b !important;
+        border: 1px solid #e2e8f0 !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -545,7 +571,7 @@ with tab_kt:
             # 전체 버튼
             with chip_cols[0]:
                 all_active = len(st.session_state['kt_chips']) == 0
-                lbl_all = "V 전체" if all_active else "전체"
+                lbl_all = ":: 전체" if all_active else "전체"
                 if st.button(lbl_all, key="kt_chip_all", use_container_width=True,
                              type="primary" if all_active else "secondary"):
                     st.session_state['kt_chips'] = set()
@@ -554,7 +580,7 @@ with tab_kt:
             for i, comp in enumerate(KT_COMPANIES_MAP.keys()):
                 with chip_cols[i + 1]:
                     is_on = comp in st.session_state['kt_chips']
-                    lbl = f"V {short_names[comp]}" if is_on else short_names[comp]
+                    lbl = f":: {short_names[comp]}" if is_on else short_names[comp]
                     if st.button(lbl, key=f"kt_chip_{i}", use_container_width=True,
                                  type="primary" if is_on else "secondary"):
                         if is_on:
