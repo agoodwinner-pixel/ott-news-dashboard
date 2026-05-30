@@ -298,9 +298,28 @@ except Exception:
     st.stop()
 
 # --- [OTT 관련 필터링 사전] ---
-OTT_BLACK_LIST = ["출연", "캐스팅", "첫방", "시청률", "아이돌", "배우", "드라마", "예능", "화제", "포토", "종영", "비하인드", "팬미팅", "제작발표회", "라인업", "시즌2", "결말", "티저", "감독", "예고편", "포스터", "신작", "몇부작", "연기", "정체", "시청자", "관전포인트", "스포일러", "안방극장", "스크린", "줄거리", "회차", "번개맨", "애니메이션", "공개", "스트리밍", "시청 가능", "시청하기", "시청할 수 있", "볼 수 있", "감상", "독점 공개", "론칭", "오리지널 시리즈", "오리지널 콘텐츠", "편성", "방영", "개봉", "방송되며"]
-OTT_STRONG_WHITE = ["인수", "지분", "실적", "공정위", "구조조정", "적자", "흑자", "매출", "투자", "MAU", "점유율", "가입자", "기업결합", "시너지", "주주", "재무", "매각", "영업이익"]
-OTT_NORMAL_WHITE = ["전략", "대표", "규제", "토종", "연합", "광고", "요금제", "영입", "플랫폼", "동향", "경쟁", "무료", "생존", "이용률", "출시", "생태계"]
+_DEFAULT_BLACK = ["출연", "캐스팅", "첫방", "시청률", "아이돌", "배우", "드라마", "예능", "화제", "포토", "종영", "비하인드", "팬미팅", "제작발표회", "라인업", "시즌2", "결말", "티저", "감독", "예고편", "포스터", "신작", "몇부작", "연기", "정체", "시청자", "관전포인트", "스포일러", "안방극장", "스크린", "줄거리", "회차", "번개맨", "애니메이션", "공개", "스트리밍", "시청 가능", "시청하기", "시청할 수 있", "볼 수 있", "감상", "독점 공개", "론칭", "오리지널 시리즈", "오리지널 콘텐츠", "편성", "방영", "개봉", "방송되며"]
+_DEFAULT_STRONG_WHITE = ["인수", "지분", "실적", "공정위", "구조조정", "적자", "흑자", "매출", "투자", "MAU", "점유율", "가입자", "기업결합", "시너지", "주주", "재무", "매각", "영업이익"]
+_DEFAULT_NORMAL_WHITE = ["전략", "대표", "규제", "토종", "연합", "광고", "요금제", "영입", "플랫폼", "동향", "경쟁", "무료", "생존", "이용률", "출시", "생태계"]
+
+_FILTER_FILE = os.path.join(os.path.dirname(__file__) or '.', 'ott_filters.json')
+
+def _load_filters():
+    if os.path.exists(_FILTER_FILE):
+        with open(_FILTER_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return {"black": _DEFAULT_BLACK, "strong_white": _DEFAULT_STRONG_WHITE, "normal_white": _DEFAULT_NORMAL_WHITE}
+
+def _save_filters(data):
+    with open(_FILTER_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+if 'ott_filters' not in st.session_state:
+    st.session_state['ott_filters'] = _load_filters()
+
+OTT_BLACK_LIST = st.session_state['ott_filters']['black']
+OTT_STRONG_WHITE = st.session_state['ott_filters']['strong_white']
+OTT_NORMAL_WHITE = st.session_state['ott_filters']['normal_white']
 
 # --- [KT 관련 검색 및 필터링 사전] ---
 KT_COMPANIES_MAP = {
@@ -732,6 +751,99 @@ with tab_ott:
             st.dataframe(df_f, column_config={"기사링크": st.column_config.LinkColumn("Link", display_text="🔗 이동")}, hide_index=True, use_container_width=True, height=500)
     else:
         st.info("왼쪽 패널에서 **[🚀 통합 데이터 갱신]** 버튼을 눌러주세요.")
+
+    # --- 블랙리스트 / 화이트리스트 관리 ---
+    with st.expander("⚙️ 필터 키워드 관리 (블랙리스트 / 화이트리스트)"):
+        flt = st.session_state['ott_filters']
+
+        ft1, ft2, ft3 = st.tabs(["🚫 블랙리스트", "⭐ 핵심 화이트", "📋 일반 화이트"])
+
+        with ft1:
+            st.caption(f"현재 {len(flt['black'])}개 — 이 단어가 포함되면 기사 차단")
+            st.markdown(
+                " ".join(f'`{w}`' for w in flt['black']),
+                unsafe_allow_html=False
+            )
+            bc1, bc2 = st.columns([3, 1])
+            with bc1:
+                black_add = st.text_input("추가할 단어", key="black_add", placeholder="단어 입력 (쉼표로 여러개)")
+            with bc2:
+                st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+                if st.button("➕ 추가", key="black_add_btn", use_container_width=True):
+                    new_words = [w.strip() for w in black_add.split(",") if w.strip()]
+                    added = [w for w in new_words if w not in flt['black']]
+                    if added:
+                        flt['black'].extend(added)
+                        _save_filters(flt)
+                        st.toast(f"블랙리스트 추가: {', '.join(added)}", icon="🚫")
+                        st.rerun()
+            black_del = st.multiselect("삭제할 단어 선택", flt['black'], key="black_del")
+            if st.button("🗑️ 선택 삭제", key="black_del_btn"):
+                if black_del:
+                    flt['black'] = [w for w in flt['black'] if w not in black_del]
+                    _save_filters(flt)
+                    st.toast(f"블랙리스트에서 {len(black_del)}개 삭제", icon="✅")
+                    st.rerun()
+
+        with ft2:
+            st.caption(f"현재 {len(flt['strong_white'])}개 — 이 단어가 있으면 핵심 산업 뉴스로 분류")
+            st.markdown(
+                " ".join(f'`{w}`' for w in flt['strong_white']),
+                unsafe_allow_html=False
+            )
+            sc1, sc2 = st.columns([3, 1])
+            with sc1:
+                strong_add = st.text_input("추가할 단어", key="strong_add", placeholder="단어 입력 (쉼표로 여러개)")
+            with sc2:
+                st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+                if st.button("➕ 추가", key="strong_add_btn", use_container_width=True):
+                    new_words = [w.strip() for w in strong_add.split(",") if w.strip()]
+                    added = [w for w in new_words if w not in flt['strong_white']]
+                    if added:
+                        flt['strong_white'].extend(added)
+                        _save_filters(flt)
+                        st.toast(f"핵심 화이트 추가: {', '.join(added)}", icon="⭐")
+                        st.rerun()
+            strong_del = st.multiselect("삭제할 단어 선택", flt['strong_white'], key="strong_del")
+            if st.button("🗑️ 선택 삭제", key="strong_del_btn"):
+                if strong_del:
+                    flt['strong_white'] = [w for w in flt['strong_white'] if w not in strong_del]
+                    _save_filters(flt)
+                    st.toast(f"핵심 화이트에서 {len(strong_del)}개 삭제", icon="✅")
+                    st.rerun()
+
+        with ft3:
+            st.caption(f"현재 {len(flt['normal_white'])}개 — 이 단어가 있으면 일반 산업 뉴스로 분류")
+            st.markdown(
+                " ".join(f'`{w}`' for w in flt['normal_white']),
+                unsafe_allow_html=False
+            )
+            nc1, nc2 = st.columns([3, 1])
+            with nc1:
+                normal_add = st.text_input("추가할 단어", key="normal_add", placeholder="단어 입력 (쉼표로 여러개)")
+            with nc2:
+                st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+                if st.button("➕ 추가", key="normal_add_btn", use_container_width=True):
+                    new_words = [w.strip() for w in normal_add.split(",") if w.strip()]
+                    added = [w for w in new_words if w not in flt['normal_white']]
+                    if added:
+                        flt['normal_white'].extend(added)
+                        _save_filters(flt)
+                        st.toast(f"일반 화이트 추가: {', '.join(added)}", icon="📋")
+                        st.rerun()
+            normal_del = st.multiselect("삭제할 단어 선택", flt['normal_white'], key="normal_del")
+            if st.button("🗑️ 선택 삭제", key="normal_del_btn"):
+                if normal_del:
+                    flt['normal_white'] = [w for w in flt['normal_white'] if w not in normal_del]
+                    _save_filters(flt)
+                    st.toast(f"일반 화이트에서 {len(normal_del)}개 삭제", icon="✅")
+                    st.rerun()
+
+        if st.button("🔄 기본값 복원", key="filter_reset"):
+            st.session_state['ott_filters'] = {"black": list(_DEFAULT_BLACK), "strong_white": list(_DEFAULT_STRONG_WHITE), "normal_white": list(_DEFAULT_NORMAL_WHITE)}
+            _save_filters(st.session_state['ott_filters'])
+            st.toast("기본값으로 복원 완료", icon="🔄")
+            st.rerun()
 
 # --- [2] KT 그룹사 기사검색 탭 ---
 with tab_kt:
