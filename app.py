@@ -103,17 +103,86 @@ st.markdown("""
         background: linear-gradient(180deg, #f8f9fc 0%, #f1f5f9 50%, #ede9fe 100%);
         border-right: 1px solid #e2e8f0;
     }
+    .news-card {
+        background: #ffffff;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        height: 100%;
+    }
+    .news-card:hover {
+        box-shadow: 0 8px 24px rgba(99,102,241,0.12);
+        transform: translateY(-2px);
+    }
+    .news-card img {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+    }
+    .news-card .card-body {
+        padding: 14px 16px;
+    }
+    .news-card .card-date {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+    .news-card .card-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.4;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .news-card .card-desc {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .news-card .card-tag {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 10px;
+        margin-top: 8px;
+    }
+    .tag-core { background: #ede9fe; color: #7c3aed; }
+    .tag-normal { background: #e0f2fe; color: #0284c7; }
+    .tag-rescued { background: #fef3c7; color: #d97706; }
+    .mini-stat {
+        display: inline-block;
+        background: #f8f9fc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 6px 14px;
+        margin-right: 8px;
+        font-size: 12px;
+        color: #64748b;
+    }
+    .mini-stat b { color: #1e293b; font-size: 16px; }
     </style>
     """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="header-box">
     <div>
-        <h1 class="header-title">📡 Strategic Intelligence Dashboard <span style="font-size:11px; background: linear-gradient(135deg, #6366f1, #8b5cf6); padding:3px 10px; border-radius:12px; font-weight:600;">V3.1</span></h1>
-        <div class="header-subtitle">OTT 산업 동향 및 KT 그룹사 통합 뉴스 기사검색 시스템</div>
+        <h1 class="header-title">📡 S.I. Dashboard <span style="font-size:11px; background: linear-gradient(135deg, #6366f1, #8b5cf6); padding:3px 10px; border-radius:12px; font-weight:600; color:white;">V3.2</span></h1>
+        <div class="header-subtitle">OTT 산업 동향 및 KT 그룹사 통합 뉴스 기사검색</div>
     </div>
     <div style="background: #f0fdf4; padding:6px 14px; border-radius:20px; border:1px solid #bbf7d0; font-size:12px; color:#16a34a;">
-        ● System Online
+        ● Online
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -187,6 +256,19 @@ def fetch_article_text(url):
     except Exception:
         return ""
 
+def fetch_article_image(url):
+    """기사 대표 이미지(og:image) 추출"""
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=3) as response:
+            soup = BeautifulSoup(response.read(), 'html.parser')
+            og = soup.find('meta', property='og:image')
+            if og and og.get('content'):
+                return og['content']
+    except Exception:
+        pass
+    return ""
+
 def is_similar_title(new_title, existing_titles, threshold=0.7):
     """제목 중복 제거 함수"""
     clean_new = re.sub(r'[^가-힣a-zA-Z0-9]', '', new_title)
@@ -252,7 +334,7 @@ def fetch_ott_news(query, limit_date):
                     desc, link = clean_html(item['description']), item['link']
                     is_valid, reason = analyze_ott_news(title, desc, link)
                     
-                    news_data = {"발행일": dt.strftime("%m-%d %H:%M"), "제목": title, "기사링크": link, "분류": reason}
+                    news_data = {"발행일": dt.strftime("%m-%d %H:%M"), "제목": title, "요약": desc, "기사링크": link, "분류": reason}
                     if is_valid: valid_list.append(news_data)
                     else: filtered_list.append(news_data)
         except Exception:
@@ -367,15 +449,57 @@ if btn_all:
 # --- [1] OTT 기사검색 탭 ---
 with tab_ott:
     if 'ott_v' in st.session_state:
-        m1, m2 = st.columns(2)
-        m1.metric("선별된 타겟 기사", f"{len(st.session_state['ott_v'])} 건")
-        m2.metric("필터링된 노이즈", f"{len(st.session_state['ott_f'])} 건")
-        
+        df_v = st.session_state['ott_v']
+        df_f = st.session_state['ott_f']
+
+        # 미니 통계
+        st.markdown(
+            f'<div style="margin-bottom:20px;">'
+            f'<span class="mini-stat">선별 <b>{len(df_v)}</b> 건</span>'
+            f'<span class="mini-stat">차단 <b>{len(df_f)}</b> 건</span>'
+            f'</div>',
+            unsafe_allow_html=True
+        )
+
+        # 상위 4건 카드형 하이라이트
+        if not df_v.empty:
+            top4 = df_v.head(4).to_dict('records')
+            # 이미지 병렬 수집
+            with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
+                imgs = list(ex.map(lambda r: fetch_article_image(r['기사링크']), top4))
+            placeholder_img = "https://placehold.co/400x200/e2e8f0/94a3b8?text=No+Image"
+
+            cols = st.columns(4)
+            for i, (item, img_url) in enumerate(zip(top4, imgs)):
+                tag_class = "tag-core"
+                if "구출" in item.get('분류', ''):
+                    tag_class = "tag-rescued"
+                elif "일반" in item.get('분류', ''):
+                    tag_class = "tag-normal"
+                card_img = img_url if img_url else placeholder_img
+                desc_text = item.get('요약', '')[:80]
+                tag_label = item.get('분류', '').replace('✅ ', '').replace('⚡ ', '')
+                with cols[i]:
+                    st.markdown(
+                        f'<a href="{item["기사링크"]}" target="_blank" style="text-decoration:none;">'
+                        f'<div class="news-card">'
+                        f'<img src="{card_img}" alt="thumbnail" onerror="this.src=\'{placeholder_img}\'">'
+                        f'<div class="card-body">'
+                        f'<div class="card-date">{item["발행일"]}</div>'
+                        f'<div class="card-title">{item["제목"]}</div>'
+                        f'<div class="card-desc">{desc_text}</div>'
+                        f'<span class="card-tag {tag_class}">{tag_label}</span>'
+                        f'</div></div></a>',
+                        unsafe_allow_html=True
+                    )
+
+            st.markdown("<div style='height:24px'></div>", unsafe_allow_html=True)
+
         sub_tab1, sub_tab2 = st.tabs(["🎯 정제된 산업 뉴스", "🗑️ 차단된 홍보 기사"])
         with sub_tab1:
-            st.dataframe(st.session_state['ott_v'], column_config={"기사링크": st.column_config.LinkColumn("Link", display_text="🔗 이동")}, hide_index=True, use_container_width=True, height=500)
+            st.dataframe(df_v, column_config={"기사링크": st.column_config.LinkColumn("Link", display_text="🔗 이동")}, hide_index=True, use_container_width=True, height=500)
         with sub_tab2:
-            st.dataframe(st.session_state['ott_f'], column_config={"기사링크": st.column_config.LinkColumn("Link", display_text="🔗 이동")}, hide_index=True, use_container_width=True, height=500)
+            st.dataframe(df_f, column_config={"기사링크": st.column_config.LinkColumn("Link", display_text="🔗 이동")}, hide_index=True, use_container_width=True, height=500)
     else:
         st.info("왼쪽 패널에서 **[🚀 통합 데이터 갱신]** 버튼을 눌러주세요.")
 
