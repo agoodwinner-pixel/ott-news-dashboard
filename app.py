@@ -170,6 +170,14 @@ st.markdown("""
         color: #64748b;
     }
     .mini-stat b { color: #1e293b; font-size: 16px; }
+    /* KT 그룹사 토글 칩 스타일 */
+    [data-testid="stHorizontalBlock"] .stButton>button {
+        font-size: 11px !important;
+        padding: 4px 6px !important;
+        height: 32px !important;
+        min-height: 32px !important;
+        border-radius: 8px !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -520,31 +528,40 @@ with tab_kt:
         kt_data_full = st.session_state['kt_df']
         if not kt_data_full.empty:
             st.markdown(
-                f'<div style="margin-bottom:12px;">'
+                f'<div style="margin-bottom:8px;">'
                 f'<span class="mini-stat">총 <b>{len(kt_data_full)}</b> 건</span>'
                 f'</div>',
                 unsafe_allow_html=True
             )
 
-            # 토글 버튼형 그룹사 필터
-            all_companies = ["전체"] + list(KT_COMPANIES_MAP.keys())
-            if 'kt_selected' not in st.session_state:
-                st.session_state['kt_selected'] = "전체"
+            # 멀티 선택 토글 칩
+            short_names = {k: k.split("/")[0] if "/" in k else k for k in KT_COMPANIES_MAP}
+            if 'kt_chips' not in st.session_state:
+                st.session_state['kt_chips'] = set()  # 빈 셋 = 전체
 
-            btn_cols = st.columns(len(all_companies))
-            for i, comp in enumerate(all_companies):
-                with btn_cols[i]:
-                    # 짧은 라벨로 표시
-                    label = comp.split("/")[0] if "/" in comp else comp
-                    is_active = st.session_state['kt_selected'] == comp
-                    if st.button(label, key=f"kt_btn_{i}", use_container_width=True,
-                                 type="primary" if is_active else "secondary"):
-                        st.session_state['kt_selected'] = comp
+            chip_cols = st.columns(len(KT_COMPANIES_MAP) + 1)
+            # 전체 버튼
+            with chip_cols[0]:
+                all_active = len(st.session_state['kt_chips']) == 0
+                if st.button("전체", key="kt_chip_all", use_container_width=True,
+                             type="primary" if all_active else "secondary"):
+                    st.session_state['kt_chips'] = set()
+                    st.rerun()
+            # 개별 그룹사 버튼
+            for i, comp in enumerate(KT_COMPANIES_MAP.keys()):
+                with chip_cols[i + 1]:
+                    is_on = comp in st.session_state['kt_chips']
+                    if st.button(short_names[comp], key=f"kt_chip_{i}", use_container_width=True,
+                                 type="primary" if is_on else "secondary"):
+                        if is_on:
+                            st.session_state['kt_chips'].discard(comp)
+                        else:
+                            st.session_state['kt_chips'].add(comp)
                         st.rerun()
 
-            kt_data = kt_data_full
-            if st.session_state['kt_selected'] != "전체":
-                kt_data = kt_data_full[kt_data_full['그룹사명'] == st.session_state['kt_selected']]
+            # 필터 적용
+            selected = st.session_state['kt_chips']
+            kt_data = kt_data_full if not selected else kt_data_full[kt_data_full['그룹사명'].isin(selected)]
 
             st.dataframe(
                 kt_data,
