@@ -24,30 +24,98 @@ KST = timezone(timedelta(hours=9))
 
 st.markdown("""
     <style>
-    .stApp { background-color: #121826; color: #e2e8f0; }
-    .header-box { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; }
-    .header-title { color: #f8fafc; font-size: 24px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
-    .header-subtitle { color: #94a3b8; font-size: 14px; margin-top: 5px; }
-    [data-testid="stMetric"] { background-color: #1e293b; padding: 15px 20px; border-radius: 12px; border: 1px solid #334155; }
-    [data-testid="stMetricLabel"] { color: #94a3b8 !important; font-weight: 600; }
-    [data-testid="stMetricValue"] { color: #f8fafc !important; }
-    .stTabs [data-baseweb="tab-list"] { gap: 8px; }
-    .stTabs [data-baseweb="tab"] { background-color: #1e293b; border-radius: 8px 8px 0 0; padding: 10px 20px; border: 1px solid #334155; border-bottom: none; color: #94a3b8; }
-    .stTabs [aria-selected="true"] { background-color: #4f46e5 !important; color: white !important; }
-    .stDataFrame { background-color: #1e293b; border-radius: 8px; padding: 10px; border: 1px solid #334155; }
-    .stButton>button { background-color: #4f46e5; color: white; border: none; border-radius: 8px; height: 45px; font-weight: 600; }
-    .stButton>button:hover { background-color: #4338ca; }
-    [data-testid="stSidebar"] { background-color: #0f172a; border-right: 1px solid #334155; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    .stApp {
+        background: linear-gradient(160deg, #0a0a0f 0%, #111127 30%, #0d1117 60%, #0a0e1a 100%);
+        color: #c9d1d9;
+        font-family: 'Inter', sans-serif;
+    }
+    .header-box {
+        background: linear-gradient(135deg, rgba(88,28,135,0.15) 0%, rgba(15,23,42,0.8) 40%, rgba(30,58,138,0.15) 100%);
+        padding: 28px 32px;
+        border-radius: 16px;
+        border: 1px solid rgba(139,92,246,0.2);
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .header-title {
+        color: #f1f5f9;
+        font-size: 26px;
+        font-weight: 800;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        letter-spacing: -0.5px;
+    }
+    .header-subtitle { color: #8b9dc3; font-size: 14px; margin-top: 6px; letter-spacing: 0.3px; }
+    [data-testid="stMetric"] {
+        background: linear-gradient(135deg, rgba(30,41,59,0.7) 0%, rgba(15,23,42,0.9) 100%);
+        padding: 18px 22px;
+        border-radius: 14px;
+        border: 1px solid rgba(99,102,241,0.15);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    [data-testid="stMetricLabel"] { color: #8b9dc3 !important; font-weight: 600; letter-spacing: 0.5px; }
+    [data-testid="stMetricValue"] { color: #e2e8f0 !important; }
+    .stTabs [data-baseweb="tab-list"] { gap: 6px; }
+    .stTabs [data-baseweb="tab"] {
+        background: rgba(30,41,59,0.5);
+        border-radius: 10px 10px 0 0;
+        padding: 12px 24px;
+        border: 1px solid rgba(99,102,241,0.1);
+        border-bottom: none;
+        color: #8b9dc3;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+    }
+    .stDataFrame {
+        background: rgba(15,23,42,0.6);
+        border-radius: 12px;
+        padding: 12px;
+        border: 1px solid rgba(99,102,241,0.1);
+        backdrop-filter: blur(8px);
+    }
+    .stButton>button {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        height: 48px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+    }
+    .stButton>button:hover {
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        box-shadow: 0 6px 24px rgba(99,102,241,0.5);
+        transform: translateY(-1px);
+    }
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #0a0e1a 0%, #111127 50%, #0d1117 100%);
+        border-right: 1px solid rgba(99,102,241,0.1);
+    }
     </style>
     """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="header-box">
     <div>
-        <h1 class="header-title">📡 Strategic Intelligence Dashboard <span style="font-size:12px; background-color:#4f46e5; padding:2px 8px; border-radius:12px;">V3.0 FULLSTACK</span></h1>
-        <div class="header-subtitle">OTT 산업 동향 및 KT 그룹사 통합 뉴스 관제 시스템</div>
+        <h1 class="header-title">📡 Strategic Intelligence Dashboard <span style="font-size:11px; background: linear-gradient(135deg, #6366f1, #8b5cf6); padding:3px 10px; border-radius:12px; font-weight:600;">V3.1</span></h1>
+        <div class="header-subtitle">OTT 산업 동향 및 KT 그룹사 통합 뉴스 기사검색 시스템</div>
     </div>
-    <div style="background-color:#1e293b; padding:5px 12px; border-radius:20px; border:1px solid #334155; font-size:12px; color:#4ade80;">
+    <div style="background: rgba(30,41,59,0.6); padding:6px 14px; border-radius:20px; border:1px solid rgba(74,222,128,0.2); font-size:12px; color:#4ade80; backdrop-filter:blur(4px);">
         ● System Online
     </div>
 </div>
@@ -265,37 +333,39 @@ def fetch_all_kt_news(limit_date):
 # 6. 메인 UI 및 컨트롤 패널
 # ==========================================
 with st.sidebar:
-    st.markdown("### 🎛️ 공통 수집 기준")
+    st.markdown("### 🎛️ 수집 기준 설정")
     search_days = st.slider("조회 기간 (N일 전부터)", 1, 7, 3)
     search_hour = st.slider("조회 기준 시간 (시)", 0, 23, 0)
-    
+
     now_kst = datetime.now(KST)
     target_date = (now_kst - timedelta(days=search_days-1)).replace(hour=search_hour, minute=0, second=0, microsecond=0)
     st.info(f"📍 갱신 기준:\n**{target_date.strftime('%Y-%m-%d %H:%M')}** 이후 기사")
-    
+
     st.divider()
-    
-    st.markdown("### 📺 OTT 관제")
+
+    st.markdown("### 📺 OTT 검색어")
     ott_keyword = st.text_input("OTT 검색어", value="티빙 웨이브")
-    btn_ott = st.button("🚀 OTT 데이터 갱신", use_container_width=True)
-    
+
     st.divider()
-    
-    st.markdown("### 🏢 KT 그룹사 관제")
-    st.caption(f"대상: {len(KT_COMPANIES_MAP)}개 그룹사 일괄 수집")
-    btn_kt = st.button("🚀 KT 그룹사 갱신", use_container_width=True)
+
+    st.caption(f"🏢 KT 그룹사: {len(KT_COMPANIES_MAP)}개 대상 일괄 수집")
+    btn_all = st.button("🚀 통합 데이터 갱신", use_container_width=True)
 
 # --- 탭 구성 ---
-tab_ott, tab_kt = st.tabs(["📺 OTT 산업 관제", "🏢 KT 그룹사 관제"])
+tab_ott, tab_kt = st.tabs(["📺 OTT 산업 기사검색", "🏢 KT 그룹사 기사검색"])
 
-# --- [1] OTT 관제 탭 ---
+# --- 통합 갱신 처리 ---
+if btn_all:
+    with st.spinner('OTT 산업 및 KT 그룹사 기사를 통합 수집 중입니다...'):
+        df_v, df_f = fetch_ott_news(ott_keyword, target_date)
+        st.session_state['ott_v'] = df_v
+        st.session_state['ott_f'] = df_f
+
+        kt_df = fetch_all_kt_news(target_date)
+        st.session_state['kt_df'] = kt_df
+
+# --- [1] OTT 기사검색 탭 ---
 with tab_ott:
-    if btn_ott:
-        with st.spinner('OTT 기사 제목 및 본문을 정밀 스캔 중입니다... (약 10~20초 소요)'):
-            df_v, df_f = fetch_ott_news(ott_keyword, target_date)
-            st.session_state['ott_v'] = df_v
-            st.session_state['ott_f'] = df_f
-            
     if 'ott_v' in st.session_state:
         m1, m2 = st.columns(2)
         m1.metric("선별된 타겟 기사", f"{len(st.session_state['ott_v'])} 건")
@@ -307,15 +377,10 @@ with tab_ott:
         with sub_tab2:
             st.dataframe(st.session_state['ott_f'], column_config={"기사링크": st.column_config.LinkColumn("Link", display_text="🔗 이동")}, hide_index=True, use_container_width=True, height=500)
     else:
-        st.info("왼쪽 패널에서 **[🚀 OTT 데이터 갱신]** 버튼을 눌러주세요.")
+        st.info("왼쪽 패널에서 **[🚀 통합 데이터 갱신]** 버튼을 눌러주세요.")
 
-# --- [2] KT 그룹사 관제 탭 ---
+# --- [2] KT 그룹사 기사검색 탭 ---
 with tab_kt:
-    if btn_kt:
-        with st.spinner('11개 KT 그룹사의 뉴스를 병렬 수집 중입니다... (약 10~30초 소요)'):
-            kt_df = fetch_all_kt_news(target_date)
-            st.session_state['kt_df'] = kt_df
-            
     if 'kt_df' in st.session_state:
         kt_data = st.session_state['kt_df']
         if not kt_data.empty:
@@ -341,4 +406,4 @@ with tab_kt:
         else:
             st.warning("해당 기간 내 수집된 그룹사 기사가 없습니다.")
     else:
-        st.info("왼쪽 패널에서 **[🚀 KT 그룹사 갱신]** 버튼을 눌러주세요.")
+        st.info("왼쪽 패널에서 **[🚀 통합 데이터 갱신]** 버튼을 눌러주세요.")
