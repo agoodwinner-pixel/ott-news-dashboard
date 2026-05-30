@@ -32,25 +32,24 @@ st.markdown("""
     }
     .header-box {
         background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 50%, #ede9fe 100%);
-        padding: 10px 20px;
-        border-radius: 12px;
+        padding: 6px 16px;
+        border-radius: 10px;
         border: 1px solid #e2e8f0;
-        margin-bottom: 16px;
+        margin-bottom: 8px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        box-shadow: 0 2px 12px rgba(99,102,241,0.06);
     }
     .header-title {
         color: #0f172a;
-        font-size: 16px;
+        font-size: 13px;
         font-weight: 700;
         margin: 0;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
     }
-    .header-subtitle { color: #94a3b8; font-size: 11px; margin-top: 2px; }
+    .header-subtitle { display: none; }
     [data-testid="stMetric"] {
         background: #ffffff;
         padding: 18px 22px;
@@ -518,15 +517,35 @@ with tab_ott:
 # --- [2] KT 그룹사 기사검색 탭 ---
 with tab_kt:
     if 'kt_df' in st.session_state:
-        kt_data = st.session_state['kt_df']
-        if not kt_data.empty:
-            st.metric("총 수집된 그룹사 기사", f"{len(kt_data)} 건")
-            
-            # 그룹사 필터 기능
-            selected_comp = st.selectbox("📂 특정 그룹사만 보기", ["전체 보기"] + list(KT_COMPANIES_MAP.keys()))
-            if selected_comp != "전체 보기":
-                kt_data = kt_data[kt_data['그룹사명'] == selected_comp]
-                
+        kt_data_full = st.session_state['kt_df']
+        if not kt_data_full.empty:
+            st.markdown(
+                f'<div style="margin-bottom:12px;">'
+                f'<span class="mini-stat">총 <b>{len(kt_data_full)}</b> 건</span>'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+
+            # 토글 버튼형 그룹사 필터
+            all_companies = ["전체"] + list(KT_COMPANIES_MAP.keys())
+            if 'kt_selected' not in st.session_state:
+                st.session_state['kt_selected'] = "전체"
+
+            btn_cols = st.columns(len(all_companies))
+            for i, comp in enumerate(all_companies):
+                with btn_cols[i]:
+                    # 짧은 라벨로 표시
+                    label = comp.split("/")[0] if "/" in comp else comp
+                    is_active = st.session_state['kt_selected'] == comp
+                    if st.button(label, key=f"kt_btn_{i}", use_container_width=True,
+                                 type="primary" if is_active else "secondary"):
+                        st.session_state['kt_selected'] = comp
+                        st.rerun()
+
+            kt_data = kt_data_full
+            if st.session_state['kt_selected'] != "전체":
+                kt_data = kt_data_full[kt_data_full['그룹사명'] == st.session_state['kt_selected']]
+
             st.dataframe(
                 kt_data,
                 column_config={
