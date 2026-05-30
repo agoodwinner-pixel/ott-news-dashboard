@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 import email.utils
 import random
 import math
+import os
 
 # ==========================================
 # 1. 디자인 및 페이지 설정 (다크 테마)
@@ -472,8 +473,6 @@ COMPANION_TAGS = {
     "연인": ["파스타", "스테이크", "오마카세", "와인바", "브런치"],
     "비즈니스": ["한정식", "코스요리", "한우", "룸"],
 }
-
-import os
 
 def _load_food_db():
     if os.path.exists(FOOD_FILE):
