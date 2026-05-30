@@ -991,7 +991,7 @@ def _match_score(rest, weather, mood, companion):
 # ==========================================
 with st.sidebar:
     st.markdown("### 🎛️ 수집 기준 설정")
-    search_days = st.slider("조회 기간 (N일 전부터)", 1, 7, 1)
+    search_days = st.slider("조회 기간 (N일 전부터)", 1, 7, 3)
     search_hour = st.slider("조회 기준 시간 (시)", 0, 23, 0)
 
     now_kst = datetime.now(KST)
