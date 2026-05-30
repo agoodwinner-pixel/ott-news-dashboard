@@ -170,13 +170,14 @@ st.markdown("""
         color: #64748b;
     }
     .mini-stat b { color: #1e293b; font-size: 16px; }
-    /* KT 그룹사 토글 칩 스타일 */
+    /* KT 그룹사 토글 칩 — 한 줄 고정 */
     [data-testid="stHorizontalBlock"] .stButton>button {
-        font-size: 11px !important;
-        padding: 4px 6px !important;
-        height: 32px !important;
-        min-height: 32px !important;
-        border-radius: 8px !important;
+        font-size: 10px !important;
+        padding: 2px 4px !important;
+        height: 28px !important;
+        min-height: 28px !important;
+        border-radius: 6px !important;
+        white-space: nowrap !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -217,7 +218,6 @@ KT_COMPANIES_MAP = {
     "밀리의서재": '"밀리의서재" | "밀리의 서재"',
     "지니뮤직": '"지니뮤직" | "KT지니뮤직"',
     "나스미디어": '"나스미디어" | "KT나스미디어"',
-    "스토리위즈": '"스토리위즈" | "KT스토리위즈"',
     "HCN": '"KT HCN" | "케이티에이치씨엔" | "HCN방송"',
     "KT알파": '"KT알파" | "케이티알파" | "알파쇼핑"',
     "KT알티미디어": '"KT알티미디어" | "케이티알티미디어" | "KT Altimedia" | "알티미디어"'
@@ -231,7 +231,6 @@ KT_VALIDATION_KEYWORDS = {
     "밀리의서재": [r"밀리의\s*서재"],
     "지니뮤직": [r"지니뮤직", r"지니\s*뮤직", r"KT\s*지니뮤직"],
     "나스미디어": [r"나스미디어", r"KT\s*나스미디어"],
-    "스토리위즈": [r"스토리위즈", r"KT\s*스토리위즈"],
     "HCN": [r"KT\s*HCN", r"에이치씨엔", r"HCN\s*방송", r"HCN"],
     "KT알파": [r"KT\s*알파", r"케이티\s*알파", r"알파\s*쇼핑"],
     "KT알티미디어": [r"KT\s*알티미디어", r"KT\s*Altimedia", r"알티미디어"]
@@ -535,7 +534,10 @@ with tab_kt:
             )
 
             # 멀티 선택 토글 칩
-            short_names = {k: k.split("/")[0] if "/" in k else k for k in KT_COMPANIES_MAP}
+            _short = {"KT/케이티": "KT", "스튜디오지니": "지니", "KT ENA/ENA": "ENA",
+                       "스카이라이프": "스카이", "밀리의서재": "밀리", "지니뮤직": "뮤직",
+                       "나스미디어": "나스", "HCN": "HCN", "KT알파": "알파", "KT알티미디어": "알티"}
+            short_names = {k: _short.get(k, k.split("/")[0]) for k in KT_COMPANIES_MAP}
             if 'kt_chips' not in st.session_state:
                 st.session_state['kt_chips'] = set()  # 빈 셋 = 전체
 
