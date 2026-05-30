@@ -534,8 +534,8 @@ with tab_kt:
             )
 
             # 멀티 선택 토글 칩
-            _short = {"KT/케이티": "KT", "스튜디오지니": "지니", "KT ENA/ENA": "ENA",
-                       "스카이라이프": "스카이", "밀리의서재": "밀리", "지니뮤직": "뮤직",
+            _short = {"KT/케이티": "KT", "스튜디오지니": "스지니", "KT ENA/ENA": "ENA",
+                       "스카이라이프": "스카이", "밀리의서재": "밀리", "지니뮤직": "지니뮤직",
                        "나스미디어": "나스", "HCN": "HCN", "KT알파": "알파", "KT알티미디어": "알티"}
             short_names = {k: _short.get(k, k.split("/")[0]) for k in KT_COMPANIES_MAP}
             if 'kt_chips' not in st.session_state:
