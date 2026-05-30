@@ -173,8 +173,8 @@ st.markdown("""
         color: #64748b;
     }
     .mini-stat b { color: #1e293b; font-size: 16px; }
-    /* KT 그룹사 토글 칩 — 한 줄 고정 */
-    [data-testid="stHorizontalBlock"] .stButton>button {
+    /* KT 그룹사 토글 칩 — kt-chips 내부만 */
+    .kt-chips [data-testid="stHorizontalBlock"] .stButton>button {
         font-size: 10px !important;
         padding: 2px 4px !important;
         height: 28px !important;
@@ -182,31 +182,64 @@ st.markdown("""
         border-radius: 6px !important;
         white-space: nowrap !important;
     }
-    [data-testid="stHorizontalBlock"] .stButton>button[kind="primary"],
-    [data-testid="stHorizontalBlock"] .stButton>button[data-testid="stBaseButton-primary"] {
+    .kt-chips [data-testid="stHorizontalBlock"] .stButton>button[kind="primary"],
+    .kt-chips [data-testid="stHorizontalBlock"] .stButton>button[data-testid="stBaseButton-primary"] {
         background: #4f46e5 !important;
         color: #ffffff !important;
         border: 2px solid #4f46e5 !important;
         font-weight: 700 !important;
         box-shadow: 0 2px 8px rgba(79,70,229,0.3) !important;
     }
-    [data-testid="stHorizontalBlock"] .stButton>button[kind="secondary"],
-    [data-testid="stHorizontalBlock"] .stButton>button[data-testid="stBaseButton-secondary"] {
+    .kt-chips [data-testid="stHorizontalBlock"] .stButton>button[kind="secondary"],
+    .kt-chips [data-testid="stHorizontalBlock"] .stButton>button[data-testid="stBaseButton-secondary"] {
         background: #f1f5f9 !important;
         color: #64748b !important;
         border: 1px solid #e2e8f0 !important;
         box-shadow: none !important;
     }
-    [data-testid="stBaseButton-primary"]>button {
-        background: #4f46e5 !important;
-        color: #ffffff !important;
-        border: 2px solid #4f46e5 !important;
-        box-shadow: 0 2px 8px rgba(79,70,229,0.3) !important;
+    /* 다크 다이얼 패널 */
+    .dark-dial {
+        background: linear-gradient(160deg, #18163a 0%, #1e1b4b 40%, #252262 100%);
+        border-radius: 20px;
+        padding: 28px 20px;
     }
-    [data-testid="stBaseButton-secondary"]>button {
-        background: #f1f5f9 !important;
-        color: #64748b !important;
-        border: 1px solid #e2e8f0 !important;
+    .dark-dial [data-testid="stHorizontalBlock"] .stButton>button {
+        background: rgba(255,255,255,0.06) !important;
+        border: 1.5px solid rgba(255,255,255,0.10) !important;
+        border-radius: 14px !important;
+        color: #c7d2fe !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        padding: 8px 4px !important;
+        height: auto !important;
+        min-height: 58px !important;
+        white-space: pre-wrap !important;
+        line-height: 1.4 !important;
+        box-shadow: none !important;
+    }
+    .dark-dial [data-testid="stHorizontalBlock"] .stButton>button:hover {
+        background: rgba(99,102,241,0.25) !important;
+        border-color: #818cf8 !important;
+    }
+    .dark-dial [data-testid="stHorizontalBlock"] .stButton>button[kind="primary"],
+    .dark-dial [data-testid="stHorizontalBlock"] .stButton>button[data-testid="stBaseButton-primary"] {
+        background: rgba(99,102,241,0.35) !important;
+        border-color: #818cf8 !important;
+        color: #fff !important;
+        box-shadow: 0 0 16px rgba(99,102,241,0.3) !important;
+    }
+    /* 추천 메인 버튼 */
+    .dark-dial .stButton>button[data-testid="stBaseButton-primary"] {
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        min-height: 62px !important;
+        height: 62px !important;
+        border-radius: 14px !important;
+        padding: 16px !important;
+        background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%) !important;
+        border: none !important;
+        box-shadow: 0 4px 20px rgba(99,102,241,0.35) !important;
+        white-space: normal !important;
     }
     /* 룰렛 애니메이션 */
     @keyframes spin-slot {
@@ -1150,6 +1183,7 @@ with tab_kt:
             )
 
             # 멀티 선택 토글 칩
+            st.markdown('<div class="kt-chips">', unsafe_allow_html=True)
             _short = {"KT/케이티": "KT", "스튜디오지니": "스지니", "KT ENA/ENA": "ENA",
                        "스카이라이프": "스카이", "밀리의서재": "밀리", "지니뮤직": "지니뮤직",
                        "나스미디어": "나스", "HCN": "HCN", "KT알파": "알파", "KT알티미디어": "알티"}
@@ -1178,6 +1212,8 @@ with tab_kt:
                         else:
                             st.session_state['kt_chips'].add(comp)
                         st.rerun()
+
+            st.markdown('</div>', unsafe_allow_html=True)  # kt-chips 닫기
 
             # 필터 적용
             selected = st.session_state['kt_chips']
@@ -1217,18 +1253,11 @@ with tab_food:
     if 'roulette_restaurants' not in st.session_state:
         st.session_state['roulette_restaurants'] = []
 
-    col_dial, col_result = st.columns([2, 3])
+    col_dial, col_result = st.columns([3, 4])
 
     # ========== 좌측: 다크 다이얼 패널 ==========
     with col_dial:
         dial_ctn = st.container()
-        # CSS 클래스 주입 (다크 테마 적용)
-        st.markdown(
-            '<style>.dark-dial-wrapper { '
-            'background: linear-gradient(160deg, #18163a 0%, #1e1b4b 40%, #252262 100%); '
-            'border-radius: 20px; padding: 24px 20px; margin: -1rem -1rem 0; }</style>',
-            unsafe_allow_html=True
-        )
         with dial_ctn:
             st.markdown('<div class="dark-dial">', unsafe_allow_html=True)
             st.markdown(
