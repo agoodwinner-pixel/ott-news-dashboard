@@ -212,16 +212,17 @@ st.markdown("""
     .dial-col [data-testid="stHorizontalBlock"] .stButton>button {
         background: rgba(255,255,255,0.06) !important;
         border: 1.5px solid rgba(255,255,255,0.10) !important;
-        border-radius: 14px !important;
+        border-radius: 12px !important;
         color: #c7d2fe !important;
-        font-size: 13px !important;
+        font-size: 11px !important;
         font-weight: 600 !important;
-        padding: 8px 4px !important;
-        height: auto !important;
-        min-height: 58px !important;
-        white-space: pre-wrap !important;
-        line-height: 1.4 !important;
+        padding: 8px 2px !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        white-space: nowrap !important;
+        line-height: 1.2 !important;
         box-shadow: none !important;
+        overflow: hidden !important;
     }
     .dial-col [data-testid="stHorizontalBlock"] .stButton>button:hover {
         background: rgba(99,102,241,0.25) !important;
@@ -1284,12 +1285,14 @@ with tab_food:
             '</div>',
             unsafe_allow_html=True
         )
+        _W_SHORT = {"비/눈": "비눈"}
         ww_cols = st.columns(len(WEATHER_TAGS))
         for i, w in enumerate(WEATHER_TAGS.keys()):
             with ww_cols[i]:
                 is_on = st.session_state['sel_weather'] == w
                 icon = _WEATHER_ICONS.get(w, "")
-                if st.button(f"{icon}\n{w}", key=f"w_{w}", use_container_width=True,
+                lbl = _W_SHORT.get(w, w)
+                if st.button(f"{icon}{lbl}", key=f"w_{w}", use_container_width=True,
                              type="primary" if is_on else "secondary"):
                     st.session_state['sel_weather'] = w if not is_on else None
                     st.rerun()
@@ -1298,12 +1301,14 @@ with tab_food:
             '<div style="font-size:12px;font-weight:600;color:#94a3b8;margin:10px 0 6px;">내 마음의 기분</div>',
             unsafe_allow_html=True
         )
+        _M_SHORT = {"스트레스": "스트레", "선택장애": "선택장애", "플렉스": "플렉스"}
         mm_cols = st.columns(len(MOOD_TAGS))
         for i, m in enumerate(MOOD_TAGS.keys()):
             with mm_cols[i]:
                 is_on = st.session_state['sel_mood'] == m
                 icon = _MOOD_ICONS.get(m, "")
-                if st.button(f"{icon}\n{m}", key=f"m_{m}", use_container_width=True,
+                lbl = _M_SHORT.get(m, m)
+                if st.button(f"{icon}{lbl}", key=f"m_{m}", use_container_width=True,
                              type="primary" if is_on else "secondary"):
                     st.session_state['sel_mood'] = m if not is_on else None
                     st.rerun()
@@ -1312,12 +1317,14 @@ with tab_food:
             '<div style="font-size:12px;font-weight:600;color:#94a3b8;margin:10px 0 6px;">누구와 함께 가나요?</div>',
             unsafe_allow_html=True
         )
+        _C_SHORT = {"비즈니스": "비즈"}
         cc_cols = st.columns(len(COMPANION_TAGS))
         for i, c in enumerate(COMPANION_TAGS.keys()):
             with cc_cols[i]:
                 is_on = st.session_state['sel_companion'] == c
                 icon = _COMP_ICONS.get(c, "")
-                if st.button(f"{icon}\n{c}", key=f"c_{c}", use_container_width=True,
+                lbl = _C_SHORT.get(c, c)
+                if st.button(f"{icon}{lbl}", key=f"c_{c}", use_container_width=True,
                              type="primary" if is_on else "secondary"):
                     st.session_state['sel_companion'] = c if not is_on else None
                     st.rerun()
