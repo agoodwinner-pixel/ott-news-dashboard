@@ -330,61 +330,41 @@ st.markdown("""
         color: #94a3b8;
         margin: 16px 0 8px;
     }
-    .dial-chips {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
+    /* 다크 패널 내부 Streamlit 버튼 오버라이드 */
+    .dark-dial [data-testid="stHorizontalBlock"] .stButton>button {
+        background: rgba(255,255,255,0.06) !important;
+        border: 1.5px solid rgba(255,255,255,0.10) !important;
+        border-radius: 14px !important;
+        color: #c7d2fe !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        padding: 10px 6px !important;
+        height: auto !important;
+        min-height: 52px !important;
+        white-space: pre-wrap !important;
+        line-height: 1.3 !important;
+        box-shadow: none !important;
     }
-    .dial-chip {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        background: rgba(255,255,255,0.06);
-        border: 1.5px solid rgba(255,255,255,0.10);
-        border-radius: 14px;
-        padding: 12px 14px 8px;
-        min-width: 62px;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-align: center;
+    .dark-dial [data-testid="stHorizontalBlock"] .stButton>button:hover {
+        background: rgba(99,102,241,0.25) !important;
+        border-color: #818cf8 !important;
     }
-    .dial-chip.active {
-        background: rgba(99,102,241,0.35);
-        border-color: #818cf8;
-        box-shadow: 0 0 16px rgba(99,102,241,0.3);
+    .dark-dial [data-testid="stHorizontalBlock"] .stButton>button[kind="primary"],
+    .dark-dial [data-testid="stHorizontalBlock"] .stButton>button[data-testid="stBaseButton-primary"] {
+        background: rgba(99,102,241,0.35) !important;
+        border-color: #818cf8 !important;
+        color: #fff !important;
+        box-shadow: 0 0 16px rgba(99,102,241,0.3) !important;
     }
-    .dial-chip .chip-icon {
-        font-size: 20px;
-        line-height: 1;
-    }
-    .dial-chip .chip-label {
-        font-size: 11px;
-        font-weight: 600;
-        color: #c7d2fe;
-    }
-    .dial-chip.active .chip-label {
-        color: #fff;
-    }
-    .dial-btn {
-        display: block;
-        width: 100%;
-        background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
-        color: #fff;
-        font-size: 15px;
-        font-weight: 700;
-        border: none;
-        border-radius: 14px;
-        padding: 16px;
-        margin-top: 24px;
-        cursor: pointer;
-        text-align: center;
-        box-shadow: 0 4px 20px rgba(99,102,241,0.3);
-        transition: all 0.2s;
-    }
-    .dial-btn:hover {
-        box-shadow: 0 6px 28px rgba(99,102,241,0.45);
-        transform: translateY(-1px);
+    /* 추천 메인 버튼 (다크 패널) */
+    .dark-dial > div[data-testid="stVerticalBlock"] > div:last-of-type .stButton>button,
+    .dark-dial .big-action .stButton>button {
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        min-height: 60px !important;
+        height: 60px !important;
+        border-radius: 14px !important;
+        padding: 16px !important;
     }
     /* 우측 결과 패널 */
     .result-panel {
@@ -1241,80 +1221,70 @@ with tab_food:
 
     # ========== 좌측: 다크 다이얼 패널 ==========
     with col_dial:
-        # 날씨 칩 HTML
-        w_chips = ""
-        for w in WEATHER_TAGS:
-            active = "active" if st.session_state['sel_weather'] == w else ""
-            w_chips += (
-                f'<div class="dial-chip {active}">'
-                f'<span class="chip-icon">{_WEATHER_ICONS.get(w,"")}</span>'
-                f'<span class="chip-label">{w}</span></div>'
-            )
-        # 기분 칩 HTML
-        m_chips = ""
-        for m in MOOD_TAGS:
-            active = "active" if st.session_state['sel_mood'] == m else ""
-            m_chips += (
-                f'<div class="dial-chip {active}">'
-                f'<span class="chip-icon">{_MOOD_ICONS.get(m,"")}</span>'
-                f'<span class="chip-label">{m}</span></div>'
-            )
-        # 동행 칩 HTML
-        c_chips = ""
-        for c in COMPANION_TAGS:
-            active = "active" if st.session_state['sel_companion'] == c else ""
-            c_chips += (
-                f'<div class="dial-chip {active}">'
-                f'<span class="chip-icon">{_COMP_ICONS.get(c,"")}</span>'
-                f'<span class="chip-label">{c}</span></div>'
-            )
+        dial_ctn = st.container()
+        # CSS 클래스 주입 (다크 테마 적용)
         st.markdown(
-            f'<div class="dial-panel">'
-            f'<div class="dial-title">⚡ 오늘의 매칭 다이얼 설정</div>'
-            f'<div class="dial-sub">오늘의 날씨, 내 마음의 상태, 함께 가는 사람을 골라보세요!</div>'
-            f'<div class="dial-label">오늘의 날씨</div>'
-            f'<div class="dial-chips">{w_chips}</div>'
-            f'<div class="dial-label">내 마음의 기분</div>'
-            f'<div class="dial-chips">{m_chips}</div>'
-            f'<div class="dial-label">누구와 함께 가나요?</div>'
-            f'<div class="dial-chips">{c_chips}</div>'
-            f'</div>',
+            '<style>.dark-dial-wrapper { '
+            'background: linear-gradient(160deg, #18163a 0%, #1e1b4b 40%, #252262 100%); '
+            'border-radius: 20px; padding: 24px 20px; margin: -1rem -1rem 0; }</style>',
             unsafe_allow_html=True
         )
-        # Streamlit 버튼으로 실제 상태 토글 (날씨)
-        ww_cols = st.columns(len(WEATHER_TAGS))
-        for i, w in enumerate(WEATHER_TAGS.keys()):
-            with ww_cols[i]:
-                is_on = st.session_state['sel_weather'] == w
-                if st.button(f"{':: ' if is_on else ''}{w}", key=f"w_{w}", use_container_width=True,
-                             type="primary" if is_on else "secondary"):
-                    st.session_state['sel_weather'] = w if not is_on else None
-                    st.rerun()
-        # 기분
-        mm_cols = st.columns(len(MOOD_TAGS))
-        for i, m in enumerate(MOOD_TAGS.keys()):
-            with mm_cols[i]:
-                is_on = st.session_state['sel_mood'] == m
-                if st.button(f"{':: ' if is_on else ''}{m}", key=f"m_{m}", use_container_width=True,
-                             type="primary" if is_on else "secondary"):
-                    st.session_state['sel_mood'] = m if not is_on else None
-                    st.rerun()
-        # 동행
-        cc_cols = st.columns(len(COMPANION_TAGS))
-        for i, c in enumerate(COMPANION_TAGS.keys()):
-            with cc_cols[i]:
-                is_on = st.session_state['sel_companion'] == c
-                if st.button(f"{':: ' if is_on else ''}{c}", key=f"c_{c}", use_container_width=True,
-                             type="primary" if is_on else "secondary"):
-                    st.session_state['sel_companion'] = c if not is_on else None
-                    st.rerun()
+        with dial_ctn:
+            st.markdown('<div class="dark-dial">', unsafe_allow_html=True)
+            st.markdown(
+                '<div class="dial-panel">'
+                '<div class="dial-title">⚡ 오늘의 매칭 다이얼 설정</div>'
+                '<div class="dial-sub">오늘의 날씨, 내 마음의 상태, 함께 가는 사람을 골라보세요!</div>'
+                '<div class="dial-label">오늘의 날씨</div>'
+                '</div>',
+                unsafe_allow_html=True
+            )
+            ww_cols = st.columns(len(WEATHER_TAGS))
+            for i, w in enumerate(WEATHER_TAGS.keys()):
+                with ww_cols[i]:
+                    is_on = st.session_state['sel_weather'] == w
+                    icon = _WEATHER_ICONS.get(w, "")
+                    if st.button(f"{icon}\n{w}", key=f"w_{w}", use_container_width=True,
+                                 type="primary" if is_on else "secondary"):
+                        st.session_state['sel_weather'] = w if not is_on else None
+                        st.rerun()
 
-        # 추천 버튼
-        btn_spin = st.button("🎯 이 조건에 딱 맞는 인생식사 추천받기  ›", use_container_width=True,
-                             type="primary", key="spin_roulette")
+            st.markdown(
+                '<div class="dial-panel" style="padding:0 24px;">'
+                '<div class="dial-label">내 마음의 기분</div></div>',
+                unsafe_allow_html=True
+            )
+            mm_cols = st.columns(len(MOOD_TAGS))
+            for i, m in enumerate(MOOD_TAGS.keys()):
+                with mm_cols[i]:
+                    is_on = st.session_state['sel_mood'] == m
+                    icon = _MOOD_ICONS.get(m, "")
+                    if st.button(f"{icon}\n{m}", key=f"m_{m}", use_container_width=True,
+                                 type="primary" if is_on else "secondary"):
+                        st.session_state['sel_mood'] = m if not is_on else None
+                        st.rerun()
 
-        st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
-        btn_random = st.button("🌀 아무거나 맛집 고속 룰렛 타임 🎲", use_container_width=True, key="random_roulette")
+            st.markdown(
+                '<div class="dial-panel" style="padding:0 24px;">'
+                '<div class="dial-label">누구와 함께 가나요?</div></div>',
+                unsafe_allow_html=True
+            )
+            cc_cols = st.columns(len(COMPANION_TAGS))
+            for i, c in enumerate(COMPANION_TAGS.keys()):
+                with cc_cols[i]:
+                    is_on = st.session_state['sel_companion'] == c
+                    icon = _COMP_ICONS.get(c, "")
+                    if st.button(f"{icon}\n{c}", key=f"c_{c}", use_container_width=True,
+                                 type="primary" if is_on else "secondary"):
+                        st.session_state['sel_companion'] = c if not is_on else None
+                        st.rerun()
+
+            st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
+            btn_spin = st.button("🎯  이 조건에 딱 맞는 인생식사 추천받기  ›", use_container_width=True,
+                                 type="primary", key="spin_roulette")
+            st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
+            btn_random = st.button("🌀  아무거나 맛집 고속 룰렛 타임  🎲", use_container_width=True, key="random_roulette")
+            st.markdown('</div>', unsafe_allow_html=True)  # dark-dial 닫기
 
     # ========== 메뉴 풀 계산 ==========
     weather = st.session_state.get('sel_weather')
