@@ -26,24 +26,23 @@ st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     .stApp {
-        background: linear-gradient(160deg, #0a0a0f 0%, #111127 30%, #0d1117 60%, #0a0e1a 100%);
-        color: #c9d1d9;
+        background: linear-gradient(160deg, #f8f9fc 0%, #eef1f8 40%, #f3f0ff 70%, #f8f9fc 100%);
+        color: #1e293b;
         font-family: 'Inter', sans-serif;
     }
     .header-box {
-        background: linear-gradient(135deg, rgba(88,28,135,0.15) 0%, rgba(15,23,42,0.8) 40%, rgba(30,58,138,0.15) 100%);
+        background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 50%, #ede9fe 100%);
         padding: 28px 32px;
         border-radius: 16px;
-        border: 1px solid rgba(139,92,246,0.2);
+        border: 1px solid #e2e8f0;
         margin-bottom: 28px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+        box-shadow: 0 4px 24px rgba(99,102,241,0.08), 0 1px 3px rgba(0,0,0,0.06);
     }
     .header-title {
-        color: #f1f5f9;
+        color: #0f172a;
         font-size: 26px;
         font-weight: 800;
         margin: 0;
@@ -52,39 +51,37 @@ st.markdown("""
         gap: 12px;
         letter-spacing: -0.5px;
     }
-    .header-subtitle { color: #8b9dc3; font-size: 14px; margin-top: 6px; letter-spacing: 0.3px; }
+    .header-subtitle { color: #64748b; font-size: 14px; margin-top: 6px; letter-spacing: 0.3px; }
     [data-testid="stMetric"] {
-        background: linear-gradient(135deg, rgba(30,41,59,0.7) 0%, rgba(15,23,42,0.9) 100%);
+        background: #ffffff;
         padding: 18px 22px;
         border-radius: 14px;
-        border: 1px solid rgba(99,102,241,0.15);
-        backdrop-filter: blur(8px);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
-    [data-testid="stMetricLabel"] { color: #8b9dc3 !important; font-weight: 600; letter-spacing: 0.5px; }
-    [data-testid="stMetricValue"] { color: #e2e8f0 !important; }
+    [data-testid="stMetricLabel"] { color: #64748b !important; font-weight: 600; letter-spacing: 0.5px; }
+    [data-testid="stMetricValue"] { color: #1e293b !important; }
     .stTabs [data-baseweb="tab-list"] { gap: 6px; }
     .stTabs [data-baseweb="tab"] {
-        background: rgba(30,41,59,0.5);
+        background: #ffffff;
         border-radius: 10px 10px 0 0;
         padding: 12px 24px;
-        border: 1px solid rgba(99,102,241,0.1);
+        border: 1px solid #e2e8f0;
         border-bottom: none;
-        color: #8b9dc3;
+        color: #64748b;
         font-weight: 500;
         transition: all 0.2s ease;
     }
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
         color: white !important;
-        box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+        box-shadow: 0 4px 12px rgba(99,102,241,0.2);
     }
     .stDataFrame {
-        background: rgba(15,23,42,0.6);
+        background: #ffffff;
         border-radius: 12px;
         padding: 12px;
-        border: 1px solid rgba(99,102,241,0.1);
-        backdrop-filter: blur(8px);
+        border: 1px solid #e2e8f0;
     }
     .stButton>button {
         background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
@@ -95,16 +92,16 @@ st.markdown("""
         font-weight: 700;
         letter-spacing: 0.3px;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+        box-shadow: 0 4px 12px rgba(99,102,241,0.2);
     }
     .stButton>button:hover {
         background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-        box-shadow: 0 6px 24px rgba(99,102,241,0.5);
+        box-shadow: 0 6px 20px rgba(99,102,241,0.35);
         transform: translateY(-1px);
     }
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0a0e1a 0%, #111127 50%, #0d1117 100%);
-        border-right: 1px solid rgba(99,102,241,0.1);
+        background: linear-gradient(180deg, #f8f9fc 0%, #f1f5f9 50%, #ede9fe 100%);
+        border-right: 1px solid #e2e8f0;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -115,7 +112,7 @@ st.markdown("""
         <h1 class="header-title">📡 Strategic Intelligence Dashboard <span style="font-size:11px; background: linear-gradient(135deg, #6366f1, #8b5cf6); padding:3px 10px; border-radius:12px; font-weight:600;">V3.1</span></h1>
         <div class="header-subtitle">OTT 산업 동향 및 KT 그룹사 통합 뉴스 기사검색 시스템</div>
     </div>
-    <div style="background: rgba(30,41,59,0.6); padding:6px 14px; border-radius:20px; border:1px solid rgba(74,222,128,0.2); font-size:12px; color:#4ade80; backdrop-filter:blur(4px);">
+    <div style="background: #f0fdf4; padding:6px 14px; border-radius:20px; border:1px solid #bbf7d0; font-size:12px; color:#16a34a;">
         ● System Online
     </div>
 </div>
@@ -132,7 +129,7 @@ except Exception:
     st.stop()
 
 # --- [OTT 관련 필터링 사전] ---
-OTT_BLACK_LIST = ["출연", "캐스팅", "첫방", "시청률", "아이돌", "배우", "드라마", "예능", "화제", "포토", "종영", "비하인드", "팬미팅", "제작발표회", "라인업", "시즌2", "결말", "티저", "감독", "예고편", "포스터", "신작", "몇부작", "연기", "정체", "시청자", "관전포인트", "스포일러", "안방극장", "스크린", "줄거리", "회차", "번개맨", "애니메이션", "공개", "스트리밍"]
+OTT_BLACK_LIST = ["출연", "캐스팅", "첫방", "시청률", "아이돌", "배우", "드라마", "예능", "화제", "포토", "종영", "비하인드", "팬미팅", "제작발표회", "라인업", "시즌2", "결말", "티저", "감독", "예고편", "포스터", "신작", "몇부작", "연기", "정체", "시청자", "관전포인트", "스포일러", "안방극장", "스크린", "줄거리", "회차", "번개맨", "애니메이션", "공개", "스트리밍", "시청 가능", "시청하기", "볼 수 있", "감상", "독점 공개", "론칭", "오리지널 시리즈", "오리지널 콘텐츠", "편성", "방영", "개봉"]
 OTT_STRONG_WHITE = ["인수", "지분", "실적", "공정위", "구조조정", "적자", "흑자", "매출", "투자", "MAU", "점유율", "가입자", "기업결합", "시너지", "주주", "재무", "매각", "영업이익"]
 OTT_NORMAL_WHITE = ["전략", "대표", "규제", "토종", "연합", "광고", "요금제", "영입", "플랫폼", "동향", "경쟁", "무료", "생존", "이용률", "출시", "생태계"]
 
