@@ -213,10 +213,13 @@ def analyze_ott_news(title, description, link):
     if not has_black:
         body_text = fetch_article_text(link)
         if body_text:
-            if any(w in body_text for w in OTT_STRONG_WHITE):
+            body_has_black = any(w in body_text for w in OTT_BLACK_LIST)
+            if any(w in body_text for w in OTT_STRONG_WHITE) and not body_has_black:
                 return True, "✅ 핵심 산업 (본문 감지)"
-            if any(w in body_text for w in OTT_NORMAL_WHITE):
+            if any(w in body_text for w in OTT_NORMAL_WHITE) and not body_has_black:
                 return True, "✅ 일반 산업 (본문 감지)"
+            if body_has_black:
+                return False, "🚫 연예/홍보성 (본문 감지)"
     
     if has_black: return False, "🚫 연예/홍보성"
     return False, "🚫 산업 단어 없음"
