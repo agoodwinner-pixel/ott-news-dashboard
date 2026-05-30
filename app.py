@@ -545,7 +545,8 @@ with tab_kt:
             # 전체 버튼
             with chip_cols[0]:
                 all_active = len(st.session_state['kt_chips']) == 0
-                if st.button("전체", key="kt_chip_all", use_container_width=True,
+                lbl_all = "V 전체" if all_active else "전체"
+                if st.button(lbl_all, key="kt_chip_all", use_container_width=True,
                              type="primary" if all_active else "secondary"):
                     st.session_state['kt_chips'] = set()
                     st.rerun()
@@ -553,7 +554,8 @@ with tab_kt:
             for i, comp in enumerate(KT_COMPANIES_MAP.keys()):
                 with chip_cols[i + 1]:
                     is_on = comp in st.session_state['kt_chips']
-                    if st.button(short_names[comp], key=f"kt_chip_{i}", use_container_width=True,
+                    lbl = f"V {short_names[comp]}" if is_on else short_names[comp]
+                    if st.button(lbl, key=f"kt_chip_{i}", use_container_width=True,
                                  type="primary" if is_on else "secondary"):
                         if is_on:
                             st.session_state['kt_chips'].discard(comp)
