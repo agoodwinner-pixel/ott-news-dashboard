@@ -208,6 +208,70 @@ st.markdown("""
         color: #64748b !important;
         border: 1px solid #e2e8f0 !important;
     }
+    /* 맛집 탭 스타일 */
+    .food-section-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #475569;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+    }
+    .food-card {
+        background: #ffffff;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        padding: 18px 20px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        transition: all 0.2s ease;
+    }
+    .food-card:hover {
+        box-shadow: 0 6px 20px rgba(99,102,241,0.10);
+        transform: translateY(-1px);
+    }
+    .food-card .food-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 4px;
+    }
+    .food-card .food-cat {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: #ede9fe;
+        color: #7c3aed;
+        margin-bottom: 6px;
+    }
+    .food-card .food-addr {
+        font-size: 11px;
+        color: #94a3b8;
+    }
+    .food-roulette {
+        text-align: center;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+        border-radius: 16px;
+        padding: 36px 24px;
+        margin: 16px 0;
+        box-shadow: 0 8px 24px rgba(99,102,241,0.25);
+    }
+    .food-roulette .pick-name {
+        font-size: 26px;
+        font-weight: 800;
+        color: #fff;
+        margin: 10px 0 4px;
+    }
+    .food-roulette .pick-info {
+        font-size: 13px;
+        color: #e2e8f0;
+    }
+    .food-roulette .pick-addr {
+        font-size: 11px;
+        color: #cbd5e1;
+        margin-top: 4px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -564,7 +628,7 @@ def _match_score(rest, weather, mood, companion):
 # ==========================================
 with st.sidebar:
     st.markdown("### 🎛️ 수집 기준 설정")
-    search_days = st.slider("조회 기간 (N일 전부터)", 1, 7, 3)
+    search_days = st.slider("조회 기간 (N일 전부터)", 1, 7, 1)
     search_hour = st.slider("조회 기준 시간 (시)", 0, 23, 0)
 
     now_kst = datetime.now(KST)
@@ -580,6 +644,11 @@ with st.sidebar:
 
     st.caption(f"🏢 KT 그룹사: {len(KT_COMPANIES_MAP)}개 대상 일괄 수집")
     btn_all = st.button("🚀 통합 데이터 갱신", use_container_width=True)
+
+# --- 첫 진입 시 1일 기준 자동 조회 ---
+if 'auto_loaded' not in st.session_state:
+    st.session_state['auto_loaded'] = True
+    btn_all = True  # 자동 갱신 트리거
 
 # --- 탭 구성 ---
 tab_ott, tab_kt, tab_food = st.tabs(["📺 OTT 산업 기사검색", "🏢 KT 그룹사 기사검색", "🍽️ 광화문 맛집추천"])
@@ -729,13 +798,24 @@ with tab_kt:
 
 # --- [3] 광화문 맛집추천 탭 ---
 with tab_food:
-    st.markdown("#### 🍽️ 광화문 맛집 추천")
-    st.caption("광화문 중심 2km 이내 · 날씨/기분/동행 기반 추천")
+    # DB 로드
+    if 'food_db' not in st.session_state:
+        st.session_state['food_db'] = _load_food_db()
+    food_db = st.session_state['food_db']
 
-    # 맛집 DB 갱신 버튼
-    fcol1, fcol2 = st.columns([3, 1])
-    with fcol2:
-        if st.button("🔄 맛집 DB 갱신", use_container_width=True):
+    # 헤더
+    fh1, fh2 = st.columns([4, 1])
+    with fh1:
+        st.markdown(
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">'
+            '<span style="font-size:15px;font-weight:700;color:#1e293b;">광화문 맛집 추천</span>'
+            f'<span class="mini-stat" style="margin:0;">등록 <b>{len(food_db)}</b> 곳</span>'
+            '</div>'
+            '<div style="font-size:11px;color:#94a3b8;">광화문 중심 2km 이내 · 날씨/기분/동행 기반 추천</div>',
+            unsafe_allow_html=True
+        )
+    with fh2:
+        if st.button("🔄 맛집 DB 갱신", key="food_refresh", use_container_width=True):
             with st.spinner("네이버 맛집 검색 중..."):
                 new_list = fetch_naver_restaurants("광화문 맛집", pages=5)
                 new_list += fetch_naver_restaurants("종로 맛집", pages=3)
@@ -751,22 +831,19 @@ with tab_food:
             st.toast(f"맛집 {len(deduped)}곳 수집 완료!", icon="✅")
             st.rerun()
 
-    # DB 로드
-    if 'food_db' not in st.session_state:
-        st.session_state['food_db'] = _load_food_db()
-    food_db = st.session_state['food_db']
-
     if not food_db:
         st.info("맛집 데이터가 없습니다. **[🔄 맛집 DB 갱신]** 버튼을 눌러 네이버에서 맛집을 수집해주세요.")
     else:
-        st.markdown(f"<span class='mini-stat'>등록 맛집 <b>{len(food_db)}</b> 곳</span>", unsafe_allow_html=True)
-
         # --- 조건 선택 ---
-        st.markdown("---")
-        st.markdown("**🌤️ 날씨**")
-        w_cols = st.columns(len(WEATHER_TAGS))
         if 'sel_weather' not in st.session_state:
             st.session_state['sel_weather'] = None
+        if 'sel_mood' not in st.session_state:
+            st.session_state['sel_mood'] = None
+        if 'sel_companion' not in st.session_state:
+            st.session_state['sel_companion'] = None
+
+        st.markdown('<div class="food-section-label">🌤️ 날씨</div>', unsafe_allow_html=True)
+        w_cols = st.columns(len(WEATHER_TAGS))
         for i, w in enumerate(WEATHER_TAGS.keys()):
             with w_cols[i]:
                 is_on = st.session_state['sel_weather'] == w
@@ -776,10 +853,8 @@ with tab_food:
                     st.session_state['sel_weather'] = w if not is_on else None
                     st.rerun()
 
-        st.markdown("**😊 기분**")
+        st.markdown('<div class="food-section-label">😊 기분</div>', unsafe_allow_html=True)
         m_cols = st.columns(len(MOOD_TAGS))
-        if 'sel_mood' not in st.session_state:
-            st.session_state['sel_mood'] = None
         for i, m in enumerate(MOOD_TAGS.keys()):
             with m_cols[i]:
                 is_on = st.session_state['sel_mood'] == m
@@ -789,10 +864,8 @@ with tab_food:
                     st.session_state['sel_mood'] = m if not is_on else None
                     st.rerun()
 
-        st.markdown("**👥 동행**")
+        st.markdown('<div class="food-section-label">👥 동행</div>', unsafe_allow_html=True)
         c_cols = st.columns(len(COMPANION_TAGS))
-        if 'sel_companion' not in st.session_state:
-            st.session_state['sel_companion'] = None
         for i, c in enumerate(COMPANION_TAGS.keys()):
             with c_cols[i]:
                 is_on = st.session_state['sel_companion'] == c
@@ -802,14 +875,14 @@ with tab_food:
                     st.session_state['sel_companion'] = c if not is_on else None
                     st.rerun()
 
-        st.markdown("---")
+        st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
         # --- 추천 버튼 ---
         rec_col1, rec_col2 = st.columns(2)
         with rec_col1:
-            btn_recommend = st.button("🎯 이 조건에 딱 맞는 인생식사 추천받기", use_container_width=True, type="primary")
+            btn_recommend = st.button("🎯 조건 맞춤 추천", use_container_width=True, type="primary")
         with rec_col2:
-            btn_roulette = st.button("🎰 아무거나! 맛집 고속 룰렛 타임", use_container_width=True)
+            btn_roulette = st.button("🎰 랜덤 룰렛", use_container_width=True)
 
         # --- 추천 결과 ---
         if btn_recommend:
@@ -827,21 +900,19 @@ with tab_food:
             if top[0][0] == 0 and not weather and not mood and not companion:
                 st.warning("조건을 하나 이상 선택해주세요!")
             else:
-                st.markdown("### 🏆 추천 결과")
+                st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
                 r_cols = st.columns(3)
                 for i, (score, rest) in enumerate(top):
                     with r_cols[i % 3]:
                         dist_text = f"{rest['distance']}m" if rest.get('distance') else "거리 미상"
-                        link_html = f' · <a href="{rest["link"]}" target="_blank">상세보기</a>' if rest.get('link') else ''
-                        stars = "⭐" * min(score, 5) if score > 0 else "🍴"
+                        link_btn = f'<a href="{rest["link"]}" target="_blank" style="font-size:11px;color:#6366f1;text-decoration:none;font-weight:600;">상세보기 →</a>' if rest.get('link') else ''
+                        stars = "⭐" * min(score, 5) if score > 0 else ""
                         st.markdown(
-                            f'<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;'
-                            f'border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,0.04);">'
-                            f'<div style="font-size:16px;font-weight:700;color:#1e293b;margin-bottom:4px;">'
-                            f'{stars} {rest["name"]}</div>'
-                            f'<div style="font-size:12px;color:#64748b;">{rest.get("category","")}</div>'
-                            f'<div style="font-size:12px;color:#94a3b8;margin-top:4px;">'
-                            f'📍 {rest.get("address","")} · {dist_text}{link_html}</div>'
+                            f'<div class="food-card">'
+                            f'<div class="food-name">{rest["name"]} {stars}</div>'
+                            f'<span class="food-cat">{rest.get("category","")}</span>'
+                            f'<div class="food-addr">📍 {rest.get("address","")} · {dist_text}</div>'
+                            f'<div style="margin-top:6px;">{link_btn}</div>'
                             f'</div>',
                             unsafe_allow_html=True
                         )
@@ -851,30 +922,28 @@ with tab_food:
                 pick = random.choice(food_db)
                 st.balloons()
                 dist_text = f"{pick['distance']}m" if pick.get('distance') else ""
-                link_html = f'<a href="{pick["link"]}" target="_blank" style="color:#e2e8f0;">상세보기</a>' if pick.get('link') else ''
+                link_html = f'<a href="{pick["link"]}" target="_blank" style="color:#e2e8f0;font-size:12px;">상세보기 →</a>' if pick.get('link') else ''
                 st.markdown(
-                    f'<div style="text-align:center;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);'
-                    f'border-radius:16px;padding:32px;margin:16px 0;">'
-                    f'<div style="font-size:48px;">🎉</div>'
-                    f'<div style="font-size:24px;font-weight:800;color:#fff;margin:8px 0;">{pick["name"]}</div>'
-                    f'<div style="font-size:14px;color:#e2e8f0;">{pick.get("category","")} · {dist_text}</div>'
-                    f'<div style="font-size:12px;color:#cbd5e1;margin-top:4px;">📍 {pick.get("address","")}</div>'
-                    f'<div style="margin-top:8px;">{link_html}</div>'
+                    f'<div class="food-roulette">'
+                    f'<div style="font-size:44px;">🎉</div>'
+                    f'<div class="pick-name">{pick["name"]}</div>'
+                    f'<div class="pick-info">{pick.get("category","")} · {dist_text}</div>'
+                    f'<div class="pick-addr">📍 {pick.get("address","")}</div>'
+                    f'<div style="margin-top:10px;">{link_html}</div>'
                     f'</div>',
                     unsafe_allow_html=True
                 )
 
         # --- 맛집 관리 (추가/삭제) ---
-        st.markdown("---")
-        with st.expander("📝 맛집 직접 관리 (추가/삭제)"):
-            st.markdown("**맛집 추가**")
+        with st.expander("📝 맛집 직접 관리 (추가/삭제)", expanded=False):
+            st.markdown('<div class="food-section-label">맛집 추가</div>', unsafe_allow_html=True)
             add_c1, add_c2, add_c3 = st.columns([2, 1, 2])
             with add_c1:
-                new_name = st.text_input("가게명", key="food_new_name")
+                new_name = st.text_input("가게명", key="food_new_name", label_visibility="collapsed", placeholder="가게명")
             with add_c2:
-                new_cat = st.selectbox("카테고리", FOOD_CATEGORIES, key="food_new_cat")
+                new_cat = st.selectbox("카테고리", FOOD_CATEGORIES, key="food_new_cat", label_visibility="collapsed")
             with add_c3:
-                new_addr = st.text_input("주소 (선택)", key="food_new_addr")
+                new_addr = st.text_input("주소", key="food_new_addr", label_visibility="collapsed", placeholder="주소 (선택)")
             if st.button("➕ 추가", key="food_add"):
                 if new_name.strip():
                     food_db.append({
@@ -892,9 +961,9 @@ with tab_food:
                 else:
                     st.warning("가게명을 입력해주세요.")
 
-            st.markdown("**맛집 삭제**")
+            st.markdown('<div class="food-section-label" style="margin-top:12px;">맛집 삭제</div>', unsafe_allow_html=True)
             del_names = [r['name'] for r in food_db]
-            del_sel = st.multiselect("삭제할 맛집 선택", del_names, key="food_del_sel")
+            del_sel = st.multiselect("삭제할 맛집 선택", del_names, key="food_del_sel", label_visibility="collapsed")
             if st.button("🗑️ 선택 삭제", key="food_del"):
                 if del_sel:
                     food_db = [r for r in food_db if r['name'] not in del_sel]
