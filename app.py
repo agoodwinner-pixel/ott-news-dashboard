@@ -438,13 +438,26 @@ tab_ott, tab_kt = st.tabs(["📺 OTT 산업 기사검색", "🏢 KT 그룹사 �
 
 # --- 통합 갱신 처리 ---
 if btn_all:
-    with st.spinner('OTT 산업 및 KT 그룹사 기사를 통합 수집 중입니다...'):
-        df_v, df_f = fetch_ott_news(ott_keyword, target_date)
-        st.session_state['ott_v'] = df_v
-        st.session_state['ott_f'] = df_f
+    progress_bar = st.progress(0, text="🔍 검색 준비 중...")
+    status_text = st.empty()
 
-        kt_df = fetch_all_kt_news(target_date)
-        st.session_state['kt_df'] = kt_df
+    status_text.markdown("**📺 OTT 산업 기사 검색 중...**")
+    progress_bar.progress(10, text="📺 OTT 기사 수집 중...")
+    df_v, df_f = fetch_ott_news(ott_keyword, target_date)
+    st.session_state['ott_v'] = df_v
+    st.session_state['ott_f'] = df_f
+    progress_bar.progress(40, text=f"📺 OTT 완료 — 선별 {len(df_v)}건 / 차단 {len(df_f)}건")
+
+    status_text.markdown(f"**🏢 KT 그룹사 {len(KT_COMPANIES_MAP)}개 병렬 검색 중...**")
+    progress_bar.progress(50, text="🏢 KT 그룹사 기사 수집 중...")
+    kt_df = fetch_all_kt_news(target_date)
+    st.session_state['kt_df'] = kt_df
+    progress_bar.progress(90, text=f"🏢 KT 완료 — {len(kt_df)}건 수집")
+
+    progress_bar.progress(100, text="검색 완료")
+    status_text.empty()
+    progress_bar.empty()
+    st.toast("통합 데이터 갱신 완료", icon="✅")
 
 # --- [1] OTT 기사검색 탭 ---
 with tab_ott:
