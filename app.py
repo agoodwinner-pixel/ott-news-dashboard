@@ -32,26 +32,25 @@ st.markdown("""
     }
     .header-box {
         background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 50%, #ede9fe 100%);
-        padding: 28px 32px;
-        border-radius: 16px;
+        padding: 10px 20px;
+        border-radius: 12px;
         border: 1px solid #e2e8f0;
-        margin-bottom: 28px;
+        margin-bottom: 16px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        box-shadow: 0 4px 24px rgba(99,102,241,0.08), 0 1px 3px rgba(0,0,0,0.06);
+        box-shadow: 0 2px 12px rgba(99,102,241,0.06);
     }
     .header-title {
         color: #0f172a;
-        font-size: 26px;
-        font-weight: 800;
+        font-size: 16px;
+        font-weight: 700;
         margin: 0;
         display: flex;
         align-items: center;
-        gap: 12px;
-        letter-spacing: -0.5px;
+        gap: 8px;
     }
-    .header-subtitle { color: #64748b; font-size: 14px; margin-top: 6px; letter-spacing: 0.3px; }
+    .header-subtitle { color: #94a3b8; font-size: 11px; margin-top: 2px; }
     [data-testid="stMetric"] {
         background: #ffffff;
         padding: 18px 22px;
