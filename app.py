@@ -305,69 +305,235 @@ st.markdown("""
         transition: background 0.2s;
     }
     .rest-links a:hover { background: #c7d2fe; }
-    /* 맛집 탭 스타일 */
-    .food-section-label {
+    /* ===== 맛집 탭 — 다크 좌측 + 라이트 우측 ===== */
+    .dial-panel {
+        background: linear-gradient(160deg, #18163a 0%, #1e1b4b 40%, #252262 100%);
+        border-radius: 20px;
+        padding: 28px 24px;
+        color: #e0e7ff;
+        height: 100%;
+    }
+    .dial-title {
+        font-size: 17px;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 4px;
+    }
+    .dial-sub {
         font-size: 12px;
-        font-weight: 700;
-        color: #475569;
-        letter-spacing: 0.5px;
-        margin-bottom: 6px;
+        color: #a5b4fc;
+        margin-bottom: 20px;
     }
-    .food-card {
-        background: #ffffff;
+    .dial-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #94a3b8;
+        margin: 16px 0 8px;
+    }
+    .dial-chips {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .dial-chip {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        background: rgba(255,255,255,0.06);
+        border: 1.5px solid rgba(255,255,255,0.10);
         border-radius: 14px;
-        border: 1px solid #e2e8f0;
-        padding: 18px 20px;
-        margin-bottom: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        transition: all 0.2s ease;
+        padding: 12px 14px 8px;
+        min-width: 62px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
     }
-    .food-card:hover {
-        box-shadow: 0 6px 20px rgba(99,102,241,0.10);
-        transform: translateY(-1px);
+    .dial-chip.active {
+        background: rgba(99,102,241,0.35);
+        border-color: #818cf8;
+        box-shadow: 0 0 16px rgba(99,102,241,0.3);
     }
-    .food-card .food-name {
+    .dial-chip .chip-icon {
+        font-size: 20px;
+        line-height: 1;
+    }
+    .dial-chip .chip-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #c7d2fe;
+    }
+    .dial-chip.active .chip-label {
+        color: #fff;
+    }
+    .dial-btn {
+        display: block;
+        width: 100%;
+        background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+        color: #fff;
         font-size: 15px;
         font-weight: 700;
+        border: none;
+        border-radius: 14px;
+        padding: 16px;
+        margin-top: 24px;
+        cursor: pointer;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(99,102,241,0.3);
+        transition: all 0.2s;
+    }
+    .dial-btn:hover {
+        box-shadow: 0 6px 28px rgba(99,102,241,0.45);
+        transform: translateY(-1px);
+    }
+    /* 우측 결과 패널 */
+    .result-panel {
+        background: #f8f9fc;
+        border-radius: 20px;
+        padding: 28px 24px;
+        border: 1px solid #e2e8f0;
+        min-height: 480px;
+    }
+    .result-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+    .result-header-title {
+        font-size: 17px;
+        font-weight: 800;
+        color: #1e293b;
+    }
+    .result-badge {
+        font-size: 11px;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 4px 12px;
+        color: #64748b;
+        font-weight: 600;
+    }
+    .result-cat-tag {
+        display: inline-block;
+        background: #312e81;
+        color: #e0e7ff;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+    }
+    .rest-top-name {
+        font-size: 22px;
+        font-weight: 800;
         color: #1e293b;
         margin-bottom: 4px;
     }
-    .food-card .food-cat {
-        display: inline-block;
-        font-size: 10px;
-        font-weight: 600;
-        padding: 2px 8px;
+    .rest-top-rating {
+        color: #22c55e;
+        font-size: 14px;
+        font-weight: 700;
+    }
+    .rest-top-desc {
+        font-size: 13px;
+        color: #475569;
+        line-height: 1.7;
+        margin: 12px 0;
+    }
+    .rest-quote {
+        background: linear-gradient(135deg, #1e1b4b, #312e81);
+        border-radius: 14px;
+        padding: 20px;
+        margin: 16px 0;
+        position: relative;
+    }
+    .rest-quote-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #22c55e;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
         border-radius: 10px;
-        background: #ede9fe;
-        color: #7c3aed;
+        margin-bottom: 10px;
+    }
+    .rest-quote-text {
+        font-size: 13px;
+        color: #c7d2fe;
+        line-height: 1.7;
+        font-style: italic;
+    }
+    .rest-info-row {
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 13px;
+    }
+    .rest-info-icon {
+        width: 28px;
+        text-align: center;
+        color: #6366f1;
+        flex-shrink: 0;
+    }
+    .rest-info-label {
+        color: #64748b;
+        font-weight: 600;
+        min-width: 80px;
+    }
+    .rest-info-value {
+        color: #1e293b;
+        font-weight: 500;
+        flex: 1;
+        text-align: right;
+    }
+    .rest-info-value.price {
+        color: #6366f1;
+        font-weight: 700;
+    }
+    .rest-tip-box {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 14px;
+        padding: 18px;
+        margin: 16px 0;
+    }
+    .rest-tip-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #6366f1;
         margin-bottom: 6px;
     }
-    .food-card .food-addr {
-        font-size: 11px;
-        color: #94a3b8;
+    .rest-tip-text {
+        font-size: 12px;
+        color: #475569;
+        line-height: 1.7;
     }
-    .food-roulette {
+    .food-action-btn {
+        display: block;
+        width: 100%;
         text-align: center;
-        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
-        border-radius: 16px;
-        padding: 36px 24px;
-        margin: 16px 0;
-        box-shadow: 0 8px 24px rgba(99,102,241,0.25);
+        font-size: 15px;
+        font-weight: 700;
+        border: none;
+        border-radius: 14px;
+        padding: 16px;
+        cursor: pointer;
+        margin-bottom: 10px;
+        transition: all 0.2s;
     }
-    .food-roulette .pick-name {
-        font-size: 26px;
-        font-weight: 800;
+    .food-action-primary {
+        background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
         color: #fff;
-        margin: 10px 0 4px;
+        box-shadow: 0 4px 20px rgba(99,102,241,0.25);
     }
-    .food-roulette .pick-info {
-        font-size: 13px;
-        color: #e2e8f0;
-    }
-    .food-roulette .pick-addr {
-        font-size: 11px;
-        color: #cbd5e1;
-        margin-top: 4px;
+    .food-action-secondary {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -1055,60 +1221,102 @@ with tab_kt:
         st.info("왼쪽 패널에서 **[🚀 통합 데이터 갱신]** 버튼을 눌러주세요.")
 
 # --- [3] 광화문 맛집추천 탭 ---
-with tab_food:
-    st.markdown(
-        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'
-        '<span style="font-size:15px;font-weight:700;color:#1e293b;">🍽️ 오늘 뭐 먹지?</span>'
-        '<span style="font-size:11px;color:#94a3b8;">광화문 2km 이내 · 메뉴 룰렛 → 식당 추천</span>'
-        '</div>',
-        unsafe_allow_html=True
-    )
+_WEATHER_ICONS = {"맑음": "☀️", "흐림": "☁️", "비/눈": "🌧️", "폭염": "🌡️", "한파": "❄️"}
+_MOOD_ICONS = {"피곤": "🔋", "기쁨": "✨", "스트레스": "⚡", "선택장애": "🎯", "플렉스": "💎"}
+_COMP_ICONS = {"혼밥": "🧑", "동료": "👥", "연인": "❤️", "비즈니스": "💼"}
 
-    # --- 메뉴 목록 표시 ---
-    st.markdown('<div class="food-section-label">📋 오늘의 메뉴 후보</div>', unsafe_allow_html=True)
-    menu_pool = list(FOOD_MENU_LIST)
-    # 조건 필터
+with tab_food:
     if 'sel_weather' not in st.session_state:
         st.session_state['sel_weather'] = None
     if 'sel_mood' not in st.session_state:
         st.session_state['sel_mood'] = None
     if 'sel_companion' not in st.session_state:
         st.session_state['sel_companion'] = None
+    if 'roulette_menu' not in st.session_state:
+        st.session_state['roulette_menu'] = None
+    if 'roulette_restaurants' not in st.session_state:
+        st.session_state['roulette_restaurants'] = []
 
-    st.markdown('<div class="food-section-label">🌤️ 날씨</div>', unsafe_allow_html=True)
-    w_cols = st.columns(len(WEATHER_TAGS))
-    for i, w in enumerate(WEATHER_TAGS.keys()):
-        with w_cols[i]:
-            is_on = st.session_state['sel_weather'] == w
-            lbl = f":: {w}" if is_on else w
-            if st.button(lbl, key=f"w_{w}", use_container_width=True,
-                         type="primary" if is_on else "secondary"):
-                st.session_state['sel_weather'] = w if not is_on else None
-                st.rerun()
+    col_dial, col_result = st.columns([2, 3])
 
-    st.markdown('<div class="food-section-label">😊 기분</div>', unsafe_allow_html=True)
-    m_cols = st.columns(len(MOOD_TAGS))
-    for i, m in enumerate(MOOD_TAGS.keys()):
-        with m_cols[i]:
-            is_on = st.session_state['sel_mood'] == m
-            lbl = f":: {m}" if is_on else m
-            if st.button(lbl, key=f"m_{m}", use_container_width=True,
-                         type="primary" if is_on else "secondary"):
-                st.session_state['sel_mood'] = m if not is_on else None
-                st.rerun()
+    # ========== 좌측: 다크 다이얼 패널 ==========
+    with col_dial:
+        # 날씨 칩 HTML
+        w_chips = ""
+        for w in WEATHER_TAGS:
+            active = "active" if st.session_state['sel_weather'] == w else ""
+            w_chips += (
+                f'<div class="dial-chip {active}">'
+                f'<span class="chip-icon">{_WEATHER_ICONS.get(w,"")}</span>'
+                f'<span class="chip-label">{w}</span></div>'
+            )
+        # 기분 칩 HTML
+        m_chips = ""
+        for m in MOOD_TAGS:
+            active = "active" if st.session_state['sel_mood'] == m else ""
+            m_chips += (
+                f'<div class="dial-chip {active}">'
+                f'<span class="chip-icon">{_MOOD_ICONS.get(m,"")}</span>'
+                f'<span class="chip-label">{m}</span></div>'
+            )
+        # 동행 칩 HTML
+        c_chips = ""
+        for c in COMPANION_TAGS:
+            active = "active" if st.session_state['sel_companion'] == c else ""
+            c_chips += (
+                f'<div class="dial-chip {active}">'
+                f'<span class="chip-icon">{_COMP_ICONS.get(c,"")}</span>'
+                f'<span class="chip-label">{c}</span></div>'
+            )
+        st.markdown(
+            f'<div class="dial-panel">'
+            f'<div class="dial-title">⚡ 오늘의 매칭 다이얼 설정</div>'
+            f'<div class="dial-sub">오늘의 날씨, 내 마음의 상태, 함께 가는 사람을 골라보세요!</div>'
+            f'<div class="dial-label">오늘의 날씨</div>'
+            f'<div class="dial-chips">{w_chips}</div>'
+            f'<div class="dial-label">내 마음의 기분</div>'
+            f'<div class="dial-chips">{m_chips}</div>'
+            f'<div class="dial-label">누구와 함께 가나요?</div>'
+            f'<div class="dial-chips">{c_chips}</div>'
+            f'</div>',
+            unsafe_allow_html=True
+        )
+        # Streamlit 버튼으로 실제 상태 토글 (날씨)
+        ww_cols = st.columns(len(WEATHER_TAGS))
+        for i, w in enumerate(WEATHER_TAGS.keys()):
+            with ww_cols[i]:
+                is_on = st.session_state['sel_weather'] == w
+                if st.button(f"{':: ' if is_on else ''}{w}", key=f"w_{w}", use_container_width=True,
+                             type="primary" if is_on else "secondary"):
+                    st.session_state['sel_weather'] = w if not is_on else None
+                    st.rerun()
+        # 기분
+        mm_cols = st.columns(len(MOOD_TAGS))
+        for i, m in enumerate(MOOD_TAGS.keys()):
+            with mm_cols[i]:
+                is_on = st.session_state['sel_mood'] == m
+                if st.button(f"{':: ' if is_on else ''}{m}", key=f"m_{m}", use_container_width=True,
+                             type="primary" if is_on else "secondary"):
+                    st.session_state['sel_mood'] = m if not is_on else None
+                    st.rerun()
+        # 동행
+        cc_cols = st.columns(len(COMPANION_TAGS))
+        for i, c in enumerate(COMPANION_TAGS.keys()):
+            with cc_cols[i]:
+                is_on = st.session_state['sel_companion'] == c
+                if st.button(f"{':: ' if is_on else ''}{c}", key=f"c_{c}", use_container_width=True,
+                             type="primary" if is_on else "secondary"):
+                    st.session_state['sel_companion'] = c if not is_on else None
+                    st.rerun()
 
-    st.markdown('<div class="food-section-label">👥 동행</div>', unsafe_allow_html=True)
-    c_cols = st.columns(len(COMPANION_TAGS))
-    for i, c in enumerate(COMPANION_TAGS.keys()):
-        with c_cols[i]:
-            is_on = st.session_state['sel_companion'] == c
-            lbl = f":: {c}" if is_on else c
-            if st.button(lbl, key=f"c_{c}", use_container_width=True,
-                         type="primary" if is_on else "secondary"):
-                st.session_state['sel_companion'] = c if not is_on else None
-                st.rerun()
+        # 추천 버튼
+        btn_spin = st.button("🎯 이 조건에 딱 맞는 인생식사 추천받기  ›", use_container_width=True,
+                             type="primary", key="spin_roulette")
 
-    # 조건에 따라 추천 메뉴 우선순위 구성
+        st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
+        btn_random = st.button("🌀 아무거나 맛집 고속 룰렛 타임 🎲", use_container_width=True, key="random_roulette")
+
+    # ========== 메뉴 풀 계산 ==========
     weather = st.session_state.get('sel_weather')
     mood = st.session_state.get('sel_mood')
     companion = st.session_state.get('sel_companion')
@@ -1119,119 +1327,190 @@ with tab_food:
         recommended_menus.extend(MOOD_TAGS[mood])
     if companion and companion in COMPANION_TAGS:
         recommended_menus.extend(COMPANION_TAGS[companion])
-    # 조건에 맞는 메뉴가 있으면 그것만, 없으면 전체
+    menu_pool = list(FOOD_MENU_LIST)
     if recommended_menus:
-        display_pool = [m for m in recommended_menus if m in menu_pool]
+        display_pool = list(dict.fromkeys(m for m in recommended_menus if m in menu_pool))
         if not display_pool:
             display_pool = menu_pool
     else:
         display_pool = menu_pool
 
-    # 메뉴 칩 표시
-    menu_chips = " ".join(
-        f'<span style="display:inline-block;background:#f0f4ff;border:1px solid #c7d2fe;'
-        f'border-radius:20px;padding:4px 12px;margin:3px;font-size:13px;color:#4338ca;'
-        f'font-weight:600;">{m}</span>'
-        for m in display_pool
-    )
-    st.markdown(f'<div style="margin:8px 0 16px;">{menu_chips}</div>', unsafe_allow_html=True)
-
-    # --- 룰렛 버튼 ---
-    st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
-    btn_spin = st.button("🎰 메뉴 룰렛 돌리기!", use_container_width=True, type="primary", key="spin_roulette")
-
-    # 이전 결과 유지
-    if 'roulette_menu' not in st.session_state:
-        st.session_state['roulette_menu'] = None
-    if 'roulette_restaurants' not in st.session_state:
-        st.session_state['roulette_restaurants'] = []
-
-    if btn_spin:
-        # 룰렛 스피닝 애니메이션
-        spin_placeholder = st.empty()
-        random.shuffle(display_pool)
-        spin_items = (display_pool * 6)[:30]  # 충분히 반복
-        slot_html = "".join(f'<div class="slot-item">{m}</div>' for m in spin_items)
-        spin_placeholder.markdown(
-            f'<div class="roulette-window">'
-            f'<div style="font-size:14px;color:#a5b4fc;margin-bottom:8px;font-weight:600;">돌리는 중...</div>'
-            f'<div style="height:60px;overflow:hidden;position:relative;">'
-            f'<div class="slot-track">{slot_html}</div>'
-            f'</div></div>',
-            unsafe_allow_html=True
-        )
-        time.sleep(1.5)
-
-        # 결과 선정
-        pick_menu = random.choice(display_pool)
+    # ========== 룰렛 실행 ==========
+    if btn_spin or btn_random:
+        pool = display_pool if btn_spin else menu_pool
+        with col_result:
+            spin_placeholder = st.empty()
+            # 스피닝 애니메이션
+            random.shuffle(pool)
+            spin_items = (pool * 6)[:30]
+            slot_html = "".join(f'<div class="slot-item">{m}</div>' for m in spin_items)
+            spin_placeholder.markdown(
+                f'<div class="roulette-window">'
+                f'<div style="font-size:14px;color:#a5b4fc;margin-bottom:8px;font-weight:600;">🎰 돌리는 중...</div>'
+                f'<div style="height:80px;overflow:hidden;position:relative;">'
+                f'<div class="slot-track">{slot_html}</div>'
+                f'</div></div>',
+                unsafe_allow_html=True
+            )
+        time.sleep(1.8)
+        pick_menu = random.choice(pool)
         st.session_state['roulette_menu'] = pick_menu
-
-        # 식당 검색
-        spin_placeholder.markdown(
-            f'<div class="roulette-window">'
-            f'<div style="font-size:14px;color:#a5b4fc;font-weight:600;">🔍 광화문 근처 "{pick_menu}" 식당 검색 중...</div>'
-            f'</div>',
-            unsafe_allow_html=True
-        )
+        with col_result:
+            spin_placeholder.markdown(
+                f'<div class="roulette-window">'
+                f'<div style="font-size:14px;color:#a5b4fc;font-weight:600;">🔍 광화문 근처 "{pick_menu}" 식당 검색 중...</div>'
+                f'</div>',
+                unsafe_allow_html=True
+            )
         restaurants = search_restaurants_by_menu(pick_menu)
         st.session_state['roulette_restaurants'] = restaurants
-        spin_placeholder.empty()
         st.balloons()
         st.rerun()
 
-    # --- 결과 표시 ---
-    if st.session_state['roulette_menu']:
-        pick_menu = st.session_state['roulette_menu']
-        restaurants = st.session_state['roulette_restaurants']
+    # ========== 우측: 결과 패널 ==========
+    with col_result:
+        if st.session_state['roulette_menu']:
+            pick_menu = st.session_state['roulette_menu']
+            restaurants = st.session_state['roulette_restaurants']
+            naver_search_url = f"https://map.naver.com/v5/search/{urllib.parse.quote('광화문 ' + pick_menu)}"
 
-        # 결과 헤더
-        naver_search_url = f"https://map.naver.com/v5/search/{urllib.parse.quote('광화문 ' + pick_menu)}"
-        st.markdown(
-            f'<div class="roulette-result">'
-            f'<div class="result-emoji">🎯</div>'
-            f'<div class="result-menu">{pick_menu}</div>'
-            f'<div class="result-sub">오늘의 메뉴가 결정되었습니다!</div>'
-            f'</div>',
-            unsafe_allow_html=True
-        )
+            # 결과 패널 시작
+            top_rest = restaurants[0] if restaurants else None
+            rest_count = len(restaurants)
 
-        # 식당 리스트
-        if restaurants:
+            # 헤더
             st.markdown(
-                f'<div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px;">'
-                f'<span style="font-size:14px;font-weight:700;color:#1e293b;">📍 광화문 근처 "{pick_menu}" 식당 {len(restaurants)}곳</span>'
-                f'<a href="{naver_search_url}" target="_blank" style="font-size:12px;color:#6366f1;text-decoration:none;font-weight:600;">'
-                f'네이버지도에서 더보기 →</a>'
+                f'<div class="result-panel">'
+                f'<div class="result-header">'
+                f'<div class="result-header-title">🍽️ 오늘의 식탁 선택</div>'
+                f'<span class="result-badge">총 {rest_count}개 후보점</span>'
                 f'</div>',
                 unsafe_allow_html=True
             )
-            for idx, r in enumerate(restaurants[:10]):
-                dist_text = f"{r['distance']}m" if r.get('distance') else ""
-                links_html = f'<a href="{r["naver_map"]}" target="_blank">🗺️ 네이버지도</a>'
-                if r.get('link'):
-                    links_html += f' <a href="{r["link"]}" target="_blank">ℹ️ 상세</a>'
+
+            if top_rest:
+                cat_label = top_rest.get('category', '').split('>')[0].strip() if top_rest.get('category') else pick_menu
+                dist_text = f"{top_rest['distance']}m" if top_rest.get('distance') else ""
+
                 st.markdown(
-                    f'<div class="rest-list-card">'
-                    f'<div class="rest-rank">{idx+1}</div>'
-                    f'<div class="rest-info">'
-                    f'<div class="rest-name">{r["name"]}</div>'
-                    f'<div class="rest-meta">{r.get("category","")} · {r.get("address","")} · {dist_text}</div>'
-                    f'</div>'
-                    f'<div class="rest-links">{links_html}</div>'
+                    f'<span class="result-cat-tag">{cat_label} 🍳</span>'
+                    f'<a href="{naver_search_url}" target="_blank" '
+                    f'style="float:right;background:#6366f1;color:#fff;font-size:11px;font-weight:700;'
+                    f'padding:6px 14px;border-radius:10px;text-decoration:none;">✨ 네이버지도 검색</a>'
+                    f'<div style="clear:both;"></div>'
+                    f'<div class="rest-top-name">{top_rest["name"]} '
+                    f'<span class="rest-top-rating">⭐</span></div>'
+                    f'<div class="rest-top-desc">'
+                    f'광화문역 인근에서 "{pick_menu}"으로 유명한 맛집입니다. '
+                    f'네이버 리뷰 기준 인기 상위 식당으로, 점심시간에는 대기가 있을 수 있습니다.</div>',
+                    unsafe_allow_html=True
+                )
+
+                # 추천 코멘트 (다크 카드)
+                condition_parts = []
+                if weather:
+                    condition_parts.append(f"{_WEATHER_ICONS.get(weather,'')} {weather}")
+                if mood:
+                    condition_parts.append(f"{_MOOD_ICONS.get(mood,'')} {mood}")
+                if companion:
+                    condition_parts.append(f"{_COMP_ICONS.get(companion,'')} {companion}")
+                condition_text = " + ".join(condition_parts) if condition_parts else "랜덤"
+
+                st.markdown(
+                    f'<div class="rest-quote">'
+                    f'<div class="rest-quote-badge">🟢 광화문 선배 보스의 특급 평결</div>'
+                    f'<div class="rest-quote-text">'
+                    f'"오늘 같은 [{condition_text}] 날에는 {pick_menu}이 딱이지! '
+                    f'광화문 피맛골을 지켜온 \'{top_rest["name"]}\'이 정답이야! '
+                    f'결정 장애 제대로 온 부서 사람들 다 같이 이끌고 갈 때는 고민할 필요 없어. '
+                    f'일단 가면 반은 해결이야."</div>'
                     f'</div>',
                     unsafe_allow_html=True
                 )
+
+                # 식당 정보
+                st.markdown(
+                    f'<div class="rest-info-row">'
+                    f'<div class="rest-info-icon">📍</div>'
+                    f'<div class="rest-info-label">위치 알림</div>'
+                    f'<div class="rest-info-value">{top_rest.get("address", "광화문 인근")} ({dist_text})</div>'
+                    f'</div>'
+                    f'<div class="rest-info-row">'
+                    f'<div class="rest-info-icon">🍴</div>'
+                    f'<div class="rest-info-label">추천 메뉴</div>'
+                    f'<div class="rest-info-value price">{pick_menu}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
+
+                # 오피스 꿀팁
+                st.markdown(
+                    f'<div class="rest-tip-box">'
+                    f'<div class="rest-tip-title">🍽️ 오늘의 추천 메뉴 조합</div>'
+                    f'<div class="rest-tip-text">💡 {top_rest["name"]}에서 {pick_menu}을(를) 기본으로 깔고, '
+                    f'사이드 메뉴 하나 시켜서 나눠 먹는 조합 추천!</div>'
+                    f'<div class="rest-tip-title" style="margin-top:10px;">오피스 꿀팁</div>'
+                    f'<div class="rest-tip-text">날씨가 좋은 날엔 웨이팅 줄이 빌딩 밖까지 늘어서지만, '
+                    f'회전율이 광속 수준이라 10~15분이면 금방 빠지니 걱정 마! '
+                    f'다 먹고 나와서 바로 옆 청계천 산책로 한 바퀴 돌며 테이크아웃 커피 한 잔 때리는 게 '
+                    f'광화문 고인물의 정석 코스란다.</div>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
+            else:
+                st.markdown(
+                    f'<div style="text-align:center;padding:40px;color:#94a3b8;">'
+                    f'<div style="font-size:36px;margin-bottom:8px;">🍳</div>'
+                    f'<div>검색 결과가 없습니다.</div>'
+                    f'<a href="{naver_search_url}" target="_blank" style="color:#6366f1;">네이버지도에서 직접 검색 →</a>'
+                    f'</div>',
+                    unsafe_allow_html=True
+                )
+
+            st.markdown('</div>', unsafe_allow_html=True)  # result-panel 닫기
+
+            # 나머지 식당 리스트
+            if len(restaurants) > 1:
+                st.markdown(
+                    f'<div style="margin:20px 0 10px;font-size:14px;font-weight:700;color:#1e293b;">'
+                    f'📍 "{pick_menu}" 주변 식당 {rest_count}곳</div>',
+                    unsafe_allow_html=True
+                )
+                for idx, r in enumerate(restaurants[:10]):
+                    dist_text = f"{r['distance']}m" if r.get('distance') else ""
+                    map_url = r.get('naver_map', '')
+                    links_html = f'<a href="{map_url}" target="_blank">🗺️ 네이버지도</a>'
+                    if r.get('link'):
+                        links_html += f' <a href="{r["link"]}" target="_blank">ℹ️ 상세</a>'
+                    st.markdown(
+                        f'<div class="rest-list-card">'
+                        f'<div class="rest-rank">{idx+1}</div>'
+                        f'<div class="rest-info">'
+                        f'<div class="rest-name">{r["name"]}</div>'
+                        f'<div class="rest-meta">{r.get("category","")} · {r.get("address","")} · {dist_text}</div>'
+                        f'</div>'
+                        f'<div class="rest-links">{links_html}</div>'
+                        f'</div>',
+                        unsafe_allow_html=True
+                    )
+
+            # 하단 버튼
+            if st.button("🔄 다시 돌리기", key="respin", use_container_width=True):
+                st.session_state['roulette_menu'] = None
+                st.session_state['roulette_restaurants'] = []
+                st.rerun()
+
         else:
+            # 초기 상태 — 안내 메시지
             st.markdown(
-                f'<div style="text-align:center;padding:24px;color:#94a3b8;">'
-                f'검색 결과가 없습니다. '
-                f'<a href="{naver_search_url}" target="_blank" style="color:#6366f1;">네이버지도에서 직접 검색 →</a>'
-                f'</div>',
+                '<div class="result-panel" style="display:flex;align-items:center;justify-content:center;'
+                'flex-direction:column;min-height:500px;">'
+                '<div style="font-size:52px;margin-bottom:16px;">🍽️</div>'
+                '<div style="font-size:18px;font-weight:700;color:#1e293b;margin-bottom:8px;">오늘의 식탁 선택</div>'
+                '<div style="font-size:13px;color:#94a3b8;text-align:center;line-height:1.6;">'
+                '왼쪽에서 날씨, 기분, 동행을 선택하고<br>'
+                '<b>인생식사 추천받기</b> 버튼을 누르세요!<br>'
+                '또는 <b>고속 룰렛</b>으로 바로 결정!</div>'
+                '</div>',
                 unsafe_allow_html=True
             )
-
-        # 다시 돌리기
-        if st.button("🔄 다시 돌리기", key="respin", use_container_width=True):
-            st.session_state['roulette_menu'] = None
-            st.session_state['roulette_restaurants'] = []
-            st.rerun()
